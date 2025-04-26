@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="/styles/tower.css" rel="stylesheet" type="text/css" media="all">
+	<script type="text/javascript" src="/scripts/common.js" defer></script>
+	<script type="text/javascript" src="/scripts/tower.js" defer></script>
+	<script type="text/javascript" src="/scripts/console.js" defer></script>
+
+	$$head
+</head>
+
+<body>
+	<div class="main-layout">
+		<div class="leftbars">
+			<div class="sidebar collapsed">
+				<button class="sidebar-tab box" onclick="toggleSidebar(this)">Navigation</button>
+				<nav class="sidebar-content box">
+					<div class="navheader">Navigation</div>
+					<ul class="navlist">
+						<li class="navitem">
+							<a href="/session">Current Session</a>
+						</li>
+						<li class="navitem">
+							<a href="/characters">Characters</a>
+						</li>
+					</ul>
+					<span class="view-count" id="view-count"></span>
+				</nav>
+			</div>
+			<div class="sidebar collapsed">
+				<button class="sidebar-tab box" onclick="toggleSidebar(this)">Settings</button>
+				<nav class="sidebar-content box">
+					<div class="navheader">Settings</div>
+					<ul class="navlist">
+						<li class="navitem">meow :3</li>
+						<li class="navitem">I dunno what goes here</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		<div class="rightbars">
+			<div class="sidebar collapsed">
+				<button class="sidebar-tab box" onclick="toggleSidebar(this)">DM Sidebar</button>
+				<nav class="sidebar-content box">
+					<div class="navheader">DM Sidebar</div>
+					<ul class="navlist">
+						<li class="navitem" id="startsession">Start Session</li>
+						<li class="navitem" id="endsession">End Session</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		$$body
+		<div class="console" id="console"></div>
+		<div class="console-input hidden" id="console-input"></div>
+	</div>
+</body>
+
+</html>

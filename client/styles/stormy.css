@@ -323,7 +323,7 @@ body:not(.dm-mode) .dm-only {
 }
 
 .hud-player {
-    width: 276px;
-    height: 276px;
+    width: 184px;
+    height: 122px;
     image-rendering: pixelated;
 }
