@@ -50,45 +50,8 @@ a {
 	color: var(--text-color);
 }
 
-.lightning-flash {
-	background-color: white;
-	transition: background-color 0s;
-}
-
-@keyframes bg-scroll {
-	from {
-		background-position: 0 0;
-	}
-
-	to {
-		background-position: calc(var(--bg-size) * var(--scr-x)) calc(var(--bg-size) * var(--scr-y));
-	}
-}
-
 .flex {
 	display: flex;
-}
-
-.background {
-	background-image: url("/assets/textures/noiseTexture.png");
-	background-size: var(--bg-size);
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: -2;
-	animation: bg-scroll var(--scr-time) linear infinite;
-}
-
-.rain {
-	image-rendering: pixelated;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: -1;
 }
 
 h1 {
@@ -104,9 +67,8 @@ h1 {
 
 .main-layout {
 	display: block;
-	max-width: 2048px;
 	margin: auto;
-	padding: 8px 60px;
+	padding: 0 64px;
 	height: 100vh;
 	box-sizing: border-box;
 }
@@ -118,7 +80,9 @@ h1 {
 	align-items: start;
 	left: 0;
 	width: 0;
+	padding-top: 8px;
 }
+
 .rightbars {
 	position: fixed;
 	display: flex;
@@ -126,21 +90,26 @@ h1 {
 	align-items: end;
 	right: 0;
 	width: 0;
+	padding-top: 8px;
 }
+
 .sidebar {
 	position: relative;
 	transition: 1s;
 	width: 0;
 	margin-bottom: 8px;
 }
+
 .leftbars .sidebar {
 	left: 0;
 	direction: ltr;
 }
+
 .rightbars .sidebar {
 	right: 0;
 	direction: rtl;
 }
+
 .sidebar-content {
 	top: 8px;
 	bottom: 8px;
@@ -149,28 +118,35 @@ h1 {
 	direction: initial;
 	z-index: 1001;
 }
+
 .leftbars .sidebar-content {
 	border-left: none;
 }
+
 .rightbars .sidebar-content {
 	border-right: none;
 }
+
 .sidebar-tab {
 	position: relative;
 	writing-mode: vertical-rl;
 	z-index: 1000;
 }
+
 .leftbars .sidebar-tab {
 	left: 200px;
 	margin-left: -9px;
 }
+
 .rightbars .sidebar-tab {
 	right: 200px;
 	margin-right: -9px;
 }
+
 .leftbars .sidebar.collapsed {
 	left: -200px;
 }
+
 .rightbars .sidebar.collapsed {
 	right: -200px;
 }

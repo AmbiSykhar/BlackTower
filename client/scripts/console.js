@@ -112,7 +112,7 @@ function unlockDMMode(msg) {
     setCookie("dm_token", dmToken);
     toggleDMMode(true);
 }
-systemCallbacks["dm"] = unlockDMMode;
+messageCallbacks.system["dm"] = unlockDMMode;
 
 function removeDMToken() {
     deleteCookie("dm_token");
@@ -121,7 +121,7 @@ function removeDMToken() {
     dmToken = "";
     toggleDMMode(false);
 }
-systemCallbacks["nodm"] = removeDMToken;
+messageCallbacks.system["nodm"] = removeDMToken;
 
 function toggleDMMode(value = null) {
     if (value != null)
@@ -162,7 +162,7 @@ let consoleCallbacks = {};
 function handleConsoleMessage(msg) {
     consoleCallbacks[msg.type]?.(msg);
 }
-messageCallbacks["console"] = handleConsoleMessage;
+messageCallbacks["console"] = consoleCallbacks;
 
 function handleLog(msg) {
     let logLine = document.createElement("div");

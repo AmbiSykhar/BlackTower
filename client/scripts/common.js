@@ -138,6 +138,45 @@ const HexDirections = {
     ne: 5,
 }
 
+class Rect {
+    /** @type {Vector2} */
+    position;
+
+    /** @type {Vector2} */
+    size;
+
+    /** @type {number} */
+    get left() {
+        return this.position.x;
+    }
+
+    /** @type {number} */
+    get right() {
+        return this.position.x + this.size.x;
+    }
+
+    /** @type {number} */
+    get top() {
+        return this.position.y;
+    }
+
+    /** @type {number} */
+    get bottom() {
+        return this.position.y + this.size.y;
+    }
+
+    /**
+     * 
+     * @param {Vector2} point
+     * 
+     * @returns {boolean}
+     */
+    contains(point) {
+        return point.x >= this.left && point.x <= this.right &&
+            point.y >= this.top && point.y <= this.bottom;
+    }
+}
+
 const HexDirectionVectors = [
     new VectorHex(0, -1, -1), new VectorHex(+1, -1, 0), new VectorHex(+1, 0, -1),
     new VectorHex(+1, 0, -1), new VectorHex(-1, +1, 0), new VectorHex(-1, 0, +1),
@@ -211,7 +250,9 @@ function deleteCookie(name) {
 
 const serverURL = `ws${(window.location.hostname != "localhost" ? "s" : "")}://${window.location.host}/ws`;
 
-let messageCallbacks = {};
+let messageCallbacks = {
+    "system": {},
+};
 
 /** @type {WebSocket} */
 let socket;
@@ -280,7 +321,7 @@ function connectToServer() {
         socket.addEventListener("message", (event) => {
             console.log("Message from server:\n\t", event.data);
             let data = JSON.parse(event.data);
-            messageCallbacks[data.category]?.(data);
+            messageCallbacks[data.category]?.[data.type]?.(data);
         });
     });
 }
@@ -297,21 +338,20 @@ function sendMessage(category, type, data = {}) {
 function handleSystemMessage(msg) {
     systemCallbacks[msg.type]?.(msg);
 }
-messageCallbacks["system"] = handleSystemMessage;
-let systemCallbacks = {};
+//messageCallbacks["system"] = handleSystemMessage;
 
 function refresh() {
     localStorage.setItem("refreshing", true);
     window.location.reload();
 }
-systemCallbacks["refresh"] = refresh;
+messageCallbacks.system["refresh"] = refresh;
 
 let viewCount = 0;
 function updateViewCount(msg) {
     viewCount = msg.count;
     updateViewElement();
 }
-systemCallbacks["viewers"] = updateViewCount;
+messageCallbacks.system["viewers"] = updateViewCount;
 
 function updateViewElement() {
     let viewCounter = document.getElementById("view-count");

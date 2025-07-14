@@ -1,0 +1,7 @@
+.canvas {
+	display: block;
+	height: calc(round(down, min(100vh, 100vw * 9/16), 360px));
+	margin: auto;
+	/* border: 1px solid grey; */
+	image-rendering: pixelated;
+}

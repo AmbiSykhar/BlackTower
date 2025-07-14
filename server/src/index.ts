@@ -40,11 +40,6 @@ let ipLogFile: fs.FileHandle;
 
 const app = connect();
 
-//TODO: TEMPORARY move this later! do this better! this is good enough for now
-app.use("/m1", async (req, res, next) => {
-    res.end(await fs.readFile("../temp/m1.sh"));
-});
-
 app.use(async (req, res, next) => {
     if (req.url && !req.url.match(/\./)) {
         let url = req.url;

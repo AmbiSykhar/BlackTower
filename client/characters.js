@@ -119,4 +119,4 @@ function handleUpdateMessage(msg) {
 }
 
 
-messageCallbacks["character"] = handleCharacterMessage;
+messageCallbacks["character"] = characterCallbacks;
