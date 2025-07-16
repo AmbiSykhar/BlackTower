@@ -1,3 +1,7 @@
+import { Vector2 } from "/scripts/classes/vector2.js"
+import { VectorHex } from "/scripts/classes/vectorHex.js"
+import { loadImage, getMousePosInCanvas } from "/scripts/common.js";
+
 const sessionCallbacks = {};
 
 const newBarFillTexture = loadImage("assets/textures/new-bar-fill.png");

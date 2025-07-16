@@ -119,4 +119,36 @@ class TowerCanvas {
 		this.#context.drawImage(image, position.x, position.y)
 	}
 
+
+	// SMALL FONT
+
+	#smallFont = new Promise((resolve) => {
+		let image = new Image();
+		image.onload = resolve.bind(resolve, image);
+		image.src = '/assets/fonts/small-font.png';
+	});
+
+	/**
+	 * 
+	 * @param {number} x 
+	 * @param {number} y 
+	 * @param {string} str
+	 */
+	writeSmall(x, y, str) {
+		const sfWidth = 5;
+		const sfHeight = 9;
+
+		let xx = x;
+		str = str.toString();
+		for (let i = 0; i < str.length; i++) {
+			const c = str[i];
+			const cIndex = c.charCodeAt(0) - 32;
+
+			let charX = (cIndex & 0xF) * sfWidth;
+			let charY = (cIndex >> 4) * sfHeight;
+
+			this.#context.drawImage(this.#smallFont, charX, charY, sfWidth, sfHeight, xx, y, sfWidth, sfHeight);
+			xx += sfWidth;
+		}
+	}
 }

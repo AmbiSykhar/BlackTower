@@ -1,3 +1,5 @@
+import { messageCallbacks } from "/scripts/socket.js";
+
 let consoleOpen = false;
 let consoleBuffer = "";
 let consolePreCursor = "";

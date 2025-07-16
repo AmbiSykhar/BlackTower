@@ -1,9 +1,12 @@
 "use strict";
 
+import { Vector2 } from "/scripts/classes/vector2.js";
+import { messageCallbacks } from "/scripts/socket.js";
+
 if (localStorage.lightning === undefined) localStorage.lightning = true; // default true
 if (localStorage.rain === undefined) localStorage.rain = true; // default true
 
-let loadingNavbar = null;
+export let loadingNavbar = null;
 if (document.getElementById("navbar") !== null) {
     loadingNavbar = fetch("/assets/templates/navbar.html")
         .then(data => { return data.text(); })
@@ -13,174 +16,6 @@ if (document.getElementById("navbar") !== null) {
 
 // General Utilities
 
-class Vector2 {
-    /** @type {Number} */
-    x;
-    /** @type {Number} */
-    y;
-
-    /**
-     * @param {Number} x
-     * @param {Number} y 
-     */
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * @param {VectorHex} hex 
-     */
-    static fromVectorHex(hex) {
-        let x = hex.q;
-        let y = hex.r + (hex.q - (hex.q & 1)) / 2;
-        return new Vector2(x, y);
-    }
-
-    [Symbol.toPrimitive](hint) {
-        if (hint === "string" || hint === "default")
-            return `[Vector2 {${this.x},${this.y}}]`;
-
-        return this.x * 1000000 + this.y;
-    }
-}
-
-class VectorHex {
-    /** @type {Number} west -> east */
-    q = null;
-    /** @type {Number} northeast -> southwest */
-    r = null;
-    /** @type {Number} southeast -> northwest */
-    s = null;
-
-    /**
-     * @param {Number} q
-     * @param {Number} r
-     * @param {Number} s
-     */
-    constructor(q, r, s = null) {
-        this.q = q;
-        this.r = r;
-        this.s = s ?? (-q - r);
-        if ((this.q ?? 0) + (this.r ?? 0) + (this.s ?? 0) != 0)
-            console.log(`Hex coordinate (${q}, ${r}, ${s}) has wrong sum!`);
-    }
-
-    /**
-     * @param {Vector2} vec2 
-     */
-    static fromVector2(vec2) {
-        let q = vec2.x;
-        let r = vec2.y - (vec2.x - (vec2.x & 1)) / 2;
-        let s = -this.q - this.r;
-        return new VectorHex(q, r, s);
-    }
-
-    calculateMissing() {
-        this.q = this.q ?? -this.r - this.s;
-        this.r = this.r ?? -this.q - this.s;
-        this.s = this.s ?? -this.q - this.r;
-    }
-
-    getNeighbor(dir) {
-        return add(this, HexDirectionVectors[dir]);
-    }
-
-    round() {
-        let q = Math.round(this.q);
-        let r = Math.round(this.r);
-        let s = Math.round(this.s);
-
-        let q_diff = Math.abs(q - this.q);
-        let r_diff = Math.abs(r - this.r);
-        let s_diff = Math.abs(s - this.s);
-
-        if (q_diff > r_diff && q_diff > s_diff) {
-            q = -r - s;
-        }
-        else if (r_diff > s_diff) {
-            r = - q - s;
-        }
-        else {
-            s = - q - r;
-        }
-        this.q = q;
-        this.r = r;
-        this.s = s;
-
-        return this;
-    }
-
-    static add(hex1, hex2) {
-        return new VectorHex(hex1.q + hex2.q, hex1.r + hex2.r, hex1.s + hex2.s);
-    }
-
-    static equals(hex1, hex2) {
-        if (hex1 === null || hex2 === null)
-            return hex1 === hex2;
-        return hex1.q == hex2.q && hex1.r == hex2.r && hex1.s == hex2.s;
-    }
-
-    [Symbol.toPrimitive](hint) {
-        if (hint === "string" || hint === "default")
-            return `[VectorHex {${this.q},${this.r},${this.s}}]`;
-
-        return this.q * 1000000 + this.r * 1000 + this.s;
-    }
-}
-
-const HexDirections = {
-    no: 0,
-    nw: 1,
-    sw: 2,
-    so: 3,
-    se: 4,
-    ne: 5,
-}
-
-class Rect {
-    /** @type {Vector2} */
-    position;
-
-    /** @type {Vector2} */
-    size;
-
-    /** @type {number} */
-    get left() {
-        return this.position.x;
-    }
-
-    /** @type {number} */
-    get right() {
-        return this.position.x + this.size.x;
-    }
-
-    /** @type {number} */
-    get top() {
-        return this.position.y;
-    }
-
-    /** @type {number} */
-    get bottom() {
-        return this.position.y + this.size.y;
-    }
-
-    /**
-     * 
-     * @param {Vector2} point
-     * 
-     * @returns {boolean}
-     */
-    contains(point) {
-        return point.x >= this.left && point.x <= this.right &&
-            point.y >= this.top && point.y <= this.bottom;
-    }
-}
-
-const HexDirectionVectors = [
-    new VectorHex(0, -1, -1), new VectorHex(+1, -1, 0), new VectorHex(+1, 0, -1),
-    new VectorHex(+1, 0, -1), new VectorHex(-1, +1, 0), new VectorHex(-1, 0, +1),
-];
 
 let mousePosition = new Vector2(0, 0);
 /**
@@ -195,7 +30,7 @@ document.addEventListener("mousemove", mouseMoved, false);
  * @param {HTMLCanvasElement} canvas
  * @param {CanvasRenderingContext2D} ctx
  */
-function getMousePosInCanvas(canvas, ctx) {
+export function getMousePosInCanvas(canvas, ctx) {
     let rect = canvas.getBoundingClientRect();
     let scale = new Vector2(canvas.width / rect.width, canvas.height / rect.height);
 
@@ -225,7 +60,7 @@ function getRandomNumber(min, max) {
     return (max - min) * Math.random() + min;
 }
 
-function loadImage(path) {
+export function loadImage(path) {
     return new Promise(resolve => {
         let image = new Image();
         image.onload = resolve.bind(resolve, image);
@@ -233,6 +68,7 @@ function loadImage(path) {
     });
 }
 
+// Cookie utilities
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -245,100 +81,6 @@ function setCookie(name, value) {
 function deleteCookie(name) {
     document.cookie = `${name}=; max-age=0`;
 }
-
-// Websocket
-
-const serverURL = `ws${(window.location.hostname != "localhost" ? "s" : "")}://${window.location.host}/ws`;
-
-let messageCallbacks = {
-    "system": {},
-};
-
-/** @type {WebSocket} */
-let socket;
-
-let reconnectDelay = 1;
-
-const startTime = Date.now();
-
-/**
- * Values:
- *   starting     - not yet attempted to connect
- *   start_failed - failed to connect on first attempt
- *   connected    - successfully connected
- *   reconnecting - attempting to reconnect after disconnecting
- *   refreshing   - server sent a refresh command to client
- */
-let socketStatus = localStorage.getItem("refreshing") ? "refreshing" : "starting";
-let socketConnectStart = 0;
-
-function connectToServer() {
-    return new Promise((resolve, reject) => {
-        socket = new WebSocket(serverURL);
-
-        socket.addEventListener("error", (event) => {
-            console.log(event);
-        });
-
-        socket.addEventListener("open", async (event) => {
-            sendMessage("system", "connect", {
-                status: socketStatus,
-                startTime: startTime,
-                connectTime: Date.now() - socketConnectStart,
-            });
-            resolve(socket);
-            reconnectDelay = 1;
-            socketStatus = "connected";
-            localStorage.setItem("refreshing", false);
-
-            await loadingNavbar;
-            let dmToken = getCookie("dm_token");
-            if (dmToken != undefined) {
-                sendMessage("system", "dm", { token: dmToken });
-            }
-        });
-
-        socket.addEventListener("close", (event) => {
-            switch (socketStatus) {
-                case "starting":
-                    socketStatus = "start_failed";
-                    socketConnectStart = Date.now();
-                case "start_failed":
-                case "reconnecting":
-                case "refreshing":
-                    console.log(`Connection failed. Retrying in ${reconnectDelay} second${reconnectDelay == 1 ? '' : 's'}...`);
-                    break;
-                case "connected":
-                    socketStatus = "reconnecting";
-                    socketConnectStart = Date.now();
-                    console.log(`Connection lost. Retrying in ${reconnectDelay} second${reconnectDelay == 1 ? '' : 's'}...`);
-                    break;
-            }
-            setTimeout(connectToServer, reconnectDelay * 1000);
-            reconnectDelay = Math.min(reconnectDelay * 2, 60)
-        });
-
-        socket.addEventListener("message", (event) => {
-            console.log("Message from server:\n\t", event.data);
-            let data = JSON.parse(event.data);
-            messageCallbacks[data.category]?.[data.type]?.(data);
-        });
-    });
-}
-
-let connectingToServer = connectToServer();
-
-function sendMessage(category, type, data = {}) {
-    let obj = { category, type, ...data };
-    let json = JSON.stringify(obj);
-    console.log("Sending to server:\n\t" + json);
-    socket.send(json);
-}
-
-function handleSystemMessage(msg) {
-    systemCallbacks[msg.type]?.(msg);
-}
-//messageCallbacks["system"] = handleSystemMessage;
 
 function refresh() {
     localStorage.setItem("refreshing", true);
@@ -362,35 +104,6 @@ function updateViewElement() {
 
 // Black Tower Utilities
 
-const smallFontWidth = 5;
-const smallFontHeight = 9;
-const smallFont = new Promise((resolve, reject) => {
-    let image = new Image();
-    image.onload = resolve.bind(resolve, image);
-    image.src = '/assets/fonts/small-font.png';
-});
-
-/**
- * 
- * @param {CanvasRenderingContext2D} ctx 
- * @param {number} x 
- * @param {number} y 
- * @param {string} str
- */
-async function writeSmall(ctx, x, y, str) {
-    let xx = x;
-    str = str.toString();
-    for (let i = 0; i < str.length; i++) {
-        const c = str[i];
-        const cIndex = c.charCodeAt(0) - 32;
-
-        let charX = (cIndex & 0xF) * smallFontWidth;
-        let charY = (cIndex >> 4) * smallFontHeight;
-
-        ctx.drawImage(await smallFont, charX, charY, smallFontWidth, smallFontHeight, xx, y, smallFontWidth, smallFontHeight);
-        xx += smallFontWidth;
-    }
-}
 
 const barBorder = loadImage('/assets/textures/bar-border.png');
 const barFill = loadImage('/assets/textures/bar-fill.png');
