@@ -1,6 +1,6 @@
 "use strict";
 
-// Websocket
+import { Cookies } from "/scripts/modules/cookies.js";
 
 const serverURL = `ws${(window.location.hostname != "localhost" ? "s" : "")}://${window.location.host}/ws`;
 
@@ -45,8 +45,8 @@ function connectToServer() {
 			socketStatus = "connected";
 			localStorage.setItem("refreshing", false);
 
-			await loadingNavbar;
-			let dmToken = getCookie("dm_token");
+			// await loadingNavbar;
+			let dmToken = Cookies.get("dm_token");
 			if (dmToken != undefined) {
 				sendMessage("system", "dm", { token: dmToken });
 			}
@@ -80,9 +80,9 @@ function connectToServer() {
 	});
 }
 
-let connectingToServer = connectToServer();
+export let connectingToServer = connectToServer();
 
-function sendMessage(category, type, data = {}) {
+export function sendMessage(category, type, data = {}) {
 	let obj = { category, type, ...data };
 	let json = JSON.stringify(obj);
 	console.log("Sending to server:\n\t" + json);

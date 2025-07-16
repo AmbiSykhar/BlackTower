@@ -1,5 +1,5 @@
-import { Vector2 } from "/scripts/classes/vector2.js"
-import { VectorHex } from "/scripts/classes/vectorHex.js"
+import { Vector2 } from "/scripts/modules/vector2.js"
+import { VectorHex } from "/scripts/modules/vectorHex.js"
 import { loadImage, getMousePosInCanvas } from "/scripts/common.js";
 
 const sessionCallbacks = {};

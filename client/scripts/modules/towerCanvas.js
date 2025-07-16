@@ -1,4 +1,6 @@
-class TowerCanvas {
+import { Vector2 } from "/scripts/modules/vector2.js";
+
+export class TowerCanvas {
 	/** @type {HTMLCanvasElement} */
 	#canvas = null;
 

@@ -1,3 +1,6 @@
+import { fixCenterText } from "/scripts/common.js";
+import { connectingToServer, sendMessage, messageCallbacks } from "/scripts/socket.js";
+
 const charactersElement = document.getElementById("characters");
 const sheetTemplate = fetch("/assets/templates/character-sheet-full.html")
     .then(sheet => sheet.text());

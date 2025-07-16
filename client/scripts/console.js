@@ -1,4 +1,5 @@
 import { messageCallbacks } from "/scripts/socket.js";
+import { Cookies } from "/scripts/modules/cookies.js";
 
 let consoleOpen = false;
 let consoleBuffer = "";
@@ -111,13 +112,13 @@ let dmMode = false;
 function unlockDMMode(msg) {
     dmToken = msg.token;
     dmUnlocked = true;
-    setCookie("dm_token", dmToken);
+    Cookies.set("dm_token", dmToken);
     toggleDMMode(true);
 }
 messageCallbacks.system["dm"] = unlockDMMode;
 
 function removeDMToken() {
-    deleteCookie("dm_token");
+    Cookies.delete("dm_token");
     dmMode = false;
     dmUnlocked = false;
     dmToken = "";
@@ -156,7 +157,7 @@ function sendConsoleCommand(str) {
     }
     let command = str.substring(0, space).trim();
     let args = str.substring(space, str.length).trim();
-    let dm = getCookie("dm_token") ?? "";
+    let dm = Cookies.get("dm_token") ?? "";
     sendMessage("console", command, { args: args, dm: dm });
 }
 

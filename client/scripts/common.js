@@ -1,6 +1,6 @@
 "use strict";
 
-import { Vector2 } from "/scripts/classes/vector2.js";
+import { Vector2 } from "/scripts/modules/vector2.js";
 import { messageCallbacks } from "/scripts/socket.js";
 
 if (localStorage.lightning === undefined) localStorage.lightning = true; // default true
@@ -56,7 +56,7 @@ function slugify(str) {
     return str.replace(/\s/g, "");
 }
 
-function getRandomNumber(min, max) {
+export function getRandomNumber(min, max) {
     return (max - min) * Math.random() + min;
 }
 
@@ -66,20 +66,6 @@ export function loadImage(path) {
         image.onload = resolve.bind(resolve, image);
         image.src = path;
     });
-}
-
-// Cookie utilities
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2)
-        return parts.pop().split(';').shift();
-}
-function setCookie(name, value) {
-    document.cookie = `${name}=${value}`;
-}
-function deleteCookie(name) {
-    document.cookie = `${name}=; max-age=0`;
 }
 
 function refresh() {
@@ -277,7 +263,7 @@ async function drawSegmentedBar(ctx, x, y, fillValue, fillMax, fillColor) {
 
 // Misc
 
-function fixCenterText() {
+export function fixCenterText() {
     let centerTexts = document.getElementsByClassName("center-text");
     for (let t of centerTexts) {
         t.style.paddingLeft = "0";

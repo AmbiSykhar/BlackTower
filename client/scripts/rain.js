@@ -1,3 +1,5 @@
+import { getRandomNumber } from "/scripts/common.js";
+
 /** @type {HTMLCanvasElement} */
 const rainCanvas = document.getElementById("rainCanvas");
 /** @type {CanvasRenderingContext2D} */
