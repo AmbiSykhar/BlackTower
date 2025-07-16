@@ -82,6 +82,12 @@ function connectToServer() {
 
 export let connectingToServer = connectToServer();
 
+/**
+ * 
+ * @param {string} category 
+ * @param {string} type 
+ * @param {object} data 
+ */
 export function sendMessage(category, type, data = {}) {
 	let obj = { category, type, ...data };
 	let json = JSON.stringify(obj);

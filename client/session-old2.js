@@ -1,6 +1,7 @@
 import { Vector2 } from "/scripts/modules/vector2.js"
 import { VectorHex } from "/scripts/modules/vectorHex.js"
 import { loadImage, getMousePosInCanvas } from "/scripts/common.js";
+import { connectingToServer, messageCallbacks, sendMessage } from "/scripts/socket.js"
 
 const sessionCallbacks = {};
 

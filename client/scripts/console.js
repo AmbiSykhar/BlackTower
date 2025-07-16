@@ -1,4 +1,4 @@
-import { messageCallbacks } from "/scripts/socket.js";
+import { messageCallbacks, sendMessage } from "/scripts/socket.js";
 import { Cookies } from "/scripts/modules/cookies.js";
 
 let consoleOpen = false;
@@ -151,13 +151,13 @@ function toggleDMMode(value = null) {
  */
 function sendConsoleCommand(str) {
     let space = str.indexOf(" ");
+    let dm = Cookies.get("dm_token") ?? "";
     if (space == -1) {
-        sendMessage("console", str);
+        sendMessage("console", str, { dm: dm });
         return;
     }
     let command = str.substring(0, space).trim();
     let args = str.substring(space, str.length).trim();
-    let dm = Cookies.get("dm_token") ?? "";
     sendMessage("console", command, { args: args, dm: dm });
 }
 

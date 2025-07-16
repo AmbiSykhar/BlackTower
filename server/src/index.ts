@@ -254,7 +254,7 @@ function handleCommand(ws: WebSocket, command: string, argsStr?: string) {
             sendConsoleLog(ws, `Command '${command} not found`);
             return;
         }
-        comm!(ws, null);
+        comm?.(ws, null);
 
         return;
     }
@@ -301,7 +301,7 @@ function handleCommand(ws: WebSocket, command: string, argsStr?: string) {
         sendConsoleLog(ws, `Command '${command} not found`);
         return;
     }
-    comm!(ws, args);
+    comm?.(ws, args);
 }
 
 dmCommands.set("damage", (ws: WebSocket, args: string[]) => {
@@ -349,6 +349,8 @@ dmCommands.set("session", (ws: WebSocket, args: Array<string>) => {
 
         broadcast("session", "turn", { chars: session?.characters });
         break;
+    default:
+        sendConsoleLog(ws, "Incorrect usage!");
     }
 });
 
