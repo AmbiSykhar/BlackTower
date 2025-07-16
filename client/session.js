@@ -56,7 +56,7 @@ async function drawPlayerHUD(charID) {
         return;
 
     const width = canvas.width = 92;
-    const height = canvas.height = 61;
+    const height = canvas.height = 92;
     ctx.clearRect(0, 0, width, height);
     ctx.imageSmoothingEnabled = false;
 
@@ -67,10 +67,17 @@ async function drawPlayerHUD(charID) {
     ctx.drawImage(await loadImage("assets/textures/portrait-background.png"), 0, 0);
     // TODO: adjust background color
 
+
     // TODO: draw portrait
+    try {
+        ctx.drawImage(await loadImage(`assets/images/${character.name}/portrait.png`), 0, 0);
+        ctx.drawImage(await loadImage(`assets/images/${character.name}/name.png`), 0, 0);
+    } catch {
+
+    }
 
     const barXs = { hp: 24, mp: 28 };
-    const barYs = { hp: 44, mp: 52 };
+    const barYs = { hp: 75, mp: 83 };
     const barRowStarts = [20, 21, 21, 4, 2, 2, 3];
     const barRowWidths = [38, 38, 38, 56, 58, 59, 58];
     const barRowHeight = 7;

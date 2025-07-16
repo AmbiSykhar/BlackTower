@@ -7,6 +7,8 @@
     --accent-color-trans: rgba(255, 223, 0, var(--box-opacity));
     --shadow-color: black;
     --text-color: white;
+
+    --hud-scale: 3;
 }
 
 @font-face {
@@ -313,8 +315,12 @@ body:not(.dm-mode) .dm-only {
     color: var(--accent-color);
 }
 
+.hud {
+    width: calc(92px * var(--hud-scale));
+}
+
 .hud-player {
-    width: 184px;
-    height: 122px;
+    width: calc(92px * var(--hud-scale));
+    height: calc(92px * var(--hud-scale));
     image-rendering: pixelated;
 }
