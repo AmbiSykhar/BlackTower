@@ -15,8 +15,6 @@
     --shadow-color-trans: rgba(0, 0, 0, var(--box-opacity));
 
     --text-color: white;
-
-    --hud-scale: 3;
 }
 
 @font-face {
@@ -324,12 +322,8 @@ body:not(.dm-mode) .dm-only {
     color: var(--accent-color);
 }
 
-.hud {
-    width: calc(92px * var(--hud-scale));
-}
-
 .hud-player {
-    width: 276px;
-    height: 276px;
+    width: 184px;
+    height: 122px;
     image-rendering: pixelated;
 }

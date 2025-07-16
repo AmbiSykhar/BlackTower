@@ -1,62 +1,230 @@
-const charactersElement = document.getElementById("characters");
-const sheetTemplate = fetch("/assets/templates/character-sheet-session.html")
-    .then(sheet => sheet.text());
-
-const skillEntryTemplate = fetch("/assets/templates/skill-list-entry.html")
-    .then(entry => entry.text());
-
-let sessionCallbacks = {};
-
-async function addFullSheet(charID) {
-    let template = await sheetTemplate;
-    if (document.getElementById(charID)) {
-        return;
-    }
-
-    let element = document.createElement("div");
-    element.id = charID;
-    element.innerHTML = template.replace(/\{cID\}/g, charID);
-    charactersElement.append(element);
-
-    let skillTabs = element.querySelectorAll(".skill-tab");
-    for (let i = 0; i < skillTabs.length; i++) {
-        skillTabs.item(i).addEventListener("click", handleSkillTabs.bind(null, charID, skillTabs, i));
-    }
-}
-
-async function addSkillEntry(charID, jobClass, skillID) {
-    let template = await skillEntryTemplate;
-    let element = document.createElement("div");
-    element.className = "table-item";
-    element.id = `${charID}-skills-${skillID}`;
-    element.innerHTML = template.replace(/\{cID\}/g, charID).replace(/\{skillName\}/g, skillID);
-
-    let skillList = document.querySelector(`#${charID} [data-update="${jobClass}-skills"]`);
-    skillList.append(element);
-    return element;
-}
+const sessionCallbacks = {};
 
 const newBarFillTexture = loadImage("assets/textures/new-bar-fill.png");
 
-async function drawPlayerHUD(charID) {
-    let hud = document.getElementById("hud");
+const barColors = {
+    hp: "#00cc00",
+    mp: "#00bbbb",
+};
 
-    let canvas = document.getElementById(`${charID}-hud`);
+/** @type HTMLCanvasElement */
+const fieldElement = document.getElementById("field");
+const fieldCtx = fieldElement.getContext("2d");
+fieldCtx.imageSmoothingEnabled = false;
+
+const fieldDrawScale = 1;
+
+const resizer = new ResizeObserver(() => {
+    fieldElement.width = fieldElement.getBoundingClientRect().width / fieldDrawScale;
+    fieldElement.height = fieldElement.getBoundingClientRect().height / fieldDrawScale;
+});
+resizer.observe(fieldElement);
+
+const hexOutlineThickness = 2;
+const gridHexRadius = 32 / fieldDrawScale;
+const hexRatio = Math.sqrt(3) / 2;
+
+class CharacterToken {
+    /**
+     * 
+     * @param {VectorHex} position 
+     * @param {string} fillColor 
+     * @param {string} borderColor 
+     */
+    constructor(position, fillColor, borderColor = null) {
+        this.position = position;
+        this.fillColor = fillColor;
+        this.borderColor = borderColor ?? "white";
+    }
+
+    /** @type {VectorHex} */
+    position;
+    /** @type {string} */
+    borderColor;
+    /** @type {string} */
+    fillColor;
+
+    draw() {
+        drawCircle(getHexCenter(this.position), gridHexRadius * (5 / 8), 2, this.borderColor, this.fillColor);
+    }
+}
+
+let CharacterTokens = [
+    new CharacterToken(new VectorHex(0, -1, 1), "red"),
+    new CharacterToken(new VectorHex(-1, 1, 0), "blue"),
+    new CharacterToken(new VectorHex(1, 0, -1), "green"),
+];
+
+drawField(3, CharacterTokens);
+
+/**
+ * @param {VectorHex} hex 
+ */
+function getHexCenter(hex) {
+    let x = gridHexRadius * (3 / 2 * hex.q);
+    let y = gridHexRadius * (hexRatio * hex.q + Math.sqrt(3) * hex.r);
+    return new Vector2(x, y);
+}
+
+/**
+ * 
+ * @param {Vector2} vec 
+ */
+function getHexAtPosition(vec) {
+    if (vec === null) {
+        return null;
+    }
+
+    let q = (2 / 3 * vec.x) / gridHexRadius;
+    let r = (-1 / 3 * vec.x + Math.sqrt(3) / 3 * vec.y) / gridHexRadius;
+
+    return new VectorHex(q, r).round();
+}
+
+/**
+ * 
+ * @param {VectorHex} hex 
+ */
+function getTokenAtHex(hex) {
+    return CharacterTokens.find(token => VectorHex.equals(token.position, hex));
+}
+
+/**
+ * 
+ * @param {PointerEvent} e 
+ */
+function handleClick(e) {
+    const pos = getMousePosInCanvas(fieldElement, fieldCtx);
+    if (!pos)
+        return;
+
+    const hex = getHexAtPosition(pos);
+    if (!hex)
+        return;
+
+    const token = getTokenAtHex(hex);
+    if (!token)
+        return;
+
+    token.borderColor = token.borderColor == "white" ? "black" : "white";
+}
+document.addEventListener("click", handleClick, false);
+
+/**
+ * @param {Number} gridRadius 
+ * @param {Array<CharacterToken>} characterTokens 
+ */
+function drawField(gridRadius, characterTokens) {
+    fieldCtx.resetTransform();
+
+    fieldCtx.clearRect(0, 0, fieldElement.width, fieldElement.height);
+    fieldCtx.translate(fieldElement.width / 2, fieldElement.height / 2);
+
+    let mousePos = getMousePosInCanvas(fieldElement, fieldCtx);
+    if (mousePos !== null) {
+        drawCircle(mousePos, 16 / fieldDrawScale, 2, "lime");
+    }
+
+    drawGrid(gridRadius, mousePos);
+    for (const c of characterTokens) {
+        c.draw();
+    }
+
+    requestAnimationFrame(drawField.bind(null, ...arguments));
+}
+
+/**
+ * @param {Number} radius
+ * @param {Vector2} mousePos
+ */
+function drawGrid(radius, mousePos) {
+    const hexWidth = gridHexRadius * 2;
+
+    for (let q = -radius; q <= radius; q++) {
+        for (let r = Math.max(-radius - q, -radius); r <= Math.min(radius - q, radius); r++) {
+            let hex = new VectorHex(q, r);
+            let fill = "transparent";
+            if (VectorHex.equals(hex, getHexAtPosition(mousePos))) {
+                fill = "rgba(255, 255, 255, 0.5)";
+            }
+
+            drawHexagon(getHexCenter(hex), hexWidth / 2, hexOutlineThickness, "white", fill);
+        }
+    }
+}
+
+/**
+ * @param {Vector2} center
+ * @param {Number} radius
+ * @param {Number} lineThickness
+ * @param {string} borderColor
+ * @param {string} fillColor
+ */
+function drawHexagon(center, radius, lineThickness, borderColor = "white", fillColor = "transparent") {
+    const cx = center.x;
+    const cy = center.y;
+    const w = radius * 2;
+    const h = radius * hexRatio * 2;
+
+    fieldCtx.lineWidth = lineThickness;
+    fieldCtx.strokeStyle = borderColor;
+    fieldCtx.fillStyle = fillColor;
+
+    fieldCtx.beginPath();
+    fieldCtx.moveTo(cx - w / 4, cy - h / 2);
+    fieldCtx.lineTo(cx + w / 4, cy - h / 2);
+    fieldCtx.lineTo(cx + w / 2, cy);
+    fieldCtx.lineTo(cx + w / 4, cy + h / 2);
+    fieldCtx.lineTo(cx - w / 4, cy + h / 2);
+    fieldCtx.lineTo(cx - w / 2, cy);
+    fieldCtx.closePath();
+
+    fieldCtx.fill();
+    fieldCtx.stroke();
+}
+
+/**
+ * @param {Vector2} center
+ * @param {Number} radius
+ * @param {Number} lineThickness
+ * @param {string} borderColor
+ * @param {string} fillColor
+ */
+function drawCircle(center, radius, lineThickness, borderColor = "white", fillColor = "transparent") {
+    fieldCtx.lineWidth = hexOutlineThickness;
+    fieldCtx.strokeStyle = borderColor;
+    fieldCtx.fillStyle = fillColor;
+
+    fieldCtx.beginPath();
+    fieldCtx.ellipse(center.x, center.y, radius, radius, 0, 0, 2 * Math.PI);
+    fieldCtx.closePath();
+
+    fieldCtx.fill();
+    fieldCtx.stroke();
+}
+
+/** @type {{ [charID: string]: SessionCharacter }} */
+let characters = {};
+
+async function drawPartyMember(cID) {
+    let party = document.getElementById("party");
+
+    let canvas = document.getElementById(`${cID}-party`);
     if (canvas == null) {
         canvas = document.createElement("canvas");
-        canvas.classList.add("hud-player");
-        canvas.id = `${charID}-hud`;
+        canvas.classList.add("party-member");
+        canvas.id = `${cID}-party`;
 
-        hud.appendChild(canvas);
+        party.appendChild(canvas);
     }
     let ctx = canvas.getContext("2d");
 
-    let character = characters[charID];
+    let character = characters[cID];
     if (!character)
         return;
 
     const width = canvas.width = 92;
-    const height = canvas.height = 92;
+    const height = canvas.height = 112;
     ctx.clearRect(0, 0, width, height);
     ctx.imageSmoothingEnabled = false;
 
@@ -130,30 +298,12 @@ async function drawPlayerHUD(charID) {
     }
 
     // TODO: buffs
-}
 
-async function updateNewBar() { }
-
-/** @type {{ [charID: string]: SessionCharacter }} */
-let characters = {};
-
-/**
- * 
- * @param {Event} event
- * @param {string} cID
- * @param {NodeListOf<Element>} tabs
- * @param {number} tabNum
- */
-function handleSkillTabs(cID, tabs, tabNum) {
-    for (let i = 0; i < tabs.length; i++) {
-        tabs[i].classList.remove("accent-text");
-        let listID = `${cID}-skill-list-${i + 1}`;
-        document.getElementById(listID).classList.add("hidden");
+    writeSmall(ctx, 32, 93, character.specialtyClass.name);
+    if (character.equippedClass) {
+        let equippedClass = character.equippedClass.name;
+        writeSmall(ctx, 37, 103, equippedClass);
     }
-
-    tabs[tabNum].classList.add("accent-text");
-    let listID = `${cID}-skill-list-${tabNum + 1}`;
-    document.getElementById(listID).classList.remove("hidden");
 }
 
 /**
@@ -163,14 +313,6 @@ function handleSkillTabs(cID, tabs, tabNum) {
 async function updateCharacter(c) {
     const cID = slugify(c.name);
     characters[cID] = c;
-
-    let skillTabs = document.getElementById(cID).querySelectorAll(".skill-tab");
-    for (let tab of skillTabs) {
-        tab.classList.remove("hidden");
-    }
-    if (c.equippedClass == null) {
-        skillTabs[1]?.classList.add("hidden");
-    }
 
     let things = Object.keys(
         Object.getOwnPropertyDescriptors(c)
@@ -182,150 +324,29 @@ async function updateCharacter(c) {
         if (typeof c[key] === "object") {
             for (let sub in c[key]) {
                 if (sub == "skills") {
-                    updateCharacterSkills(cID, key, c[key][sub]);
+                    //updateCharacterSkills(cID, key, c[key][sub]);
                     continue;
                 }
-                updateCharacterData(cID, `${key}-${sub}`, c[key][sub]);
+                //updateCharacterData(cID, `${key}-${sub}`, c[key][sub]);
             }
             continue;
         }
-        updateCharacterData(cID, key, c[key]);
+        //updateCharacterData(cID, key, c[key]);
     }
 
     // TEMP
-    updateBar(cID, "hp", c.currentHP, c.maxHP, c.hpPotions, SessionCharacter.maxHPPotions);
-    updateBar(cID, "mp", c.currentMP, c.maxMP, c.mpPotions, SessionCharacter.maxMPPotions);
-    updateClassMechanic(cID, 1);
-    updateClassMechanic(cID, 2);
-    updateGems(cID, c.gems);
-    updateBuffs(cID, c.buffs);
+    //updateBar(cID, "hp", c.currentHP, c.maxHP, c.hpPotions, SessionCharacter.maxHPPotions);
+    //updateBar(cID, "mp", c.currentMP, c.maxMP, c.mpPotions, SessionCharacter.maxMPPotions);
+    //updateClassMechanic(cID, 1);
+    //updateClassMechanic(cID, 2);
+    //updateGems(cID, c.gems);
+    //updateBuffs(cID, c.buffs);
 
-    drawPlayerHUD(cID);
+    drawPartyMember(cID);
 
     fixCenterText();
 }
 sessionCallbacks["char"] = msg => updateCharacter(new SessionCharacter(msg.char));
-
-const barColors = {
-    hp: "#00cc00",
-    mp: "#00bbbb",
-};
-
-async function updateBar(cID, bar, current, max, potionCount, potionMax) {
-    /** @type {HTMLCanvasElement} */
-    let canvas = document.getElementById(`${cID}-${bar}-canvas`);
-    /** @type {CanvasRenderingContext2D} */
-    let ctx = canvas.getContext("2d");
-
-    const width = canvas.width = 81;
-    const height = canvas.height = 16;
-    ctx.clearRect(0, 0, width, height);
-    ctx.imageSmoothingEnabled = false;
-
-    // resource bar
-    const numPos = { x: width - 45, y: 2 };
-    drawBar(ctx, 0, 0, width, current, max, barColors[bar], await loadImage(`/assets/textures/${bar}-label.png`)).then(() => {
-        writeSmall(ctx, numPos.x, numPos.y, `${' '.repeat(3 - current.toString().length)}${current}/${' '.repeat(3 - max.toString().length)}${max}`);
-    });
-
-    // potion counter
-    drawSegmentedBar(ctx, width - 8, 9, potionCount, potionMax, barColors[bar]);
-}
-
-function updateCharacterData(cID, key, data) {
-    let elems = document.querySelectorAll(`#${cID} [data-update="${key}"]`);
-    if (elems.length < 1)
-        return;
-
-    for (let elem of elems) {
-        if (elem?.tagName == "IMG") {
-            elem.srcset = data;
-            elem.alt = cID;
-            continue;
-        }
-        if (elem.getAttribute("data-stat") == "relative") {
-            if (data > 0) {
-                data = `${data}`;
-                elem.classList.add("positive");
-            }
-            if (data < 0) {
-                elem.classList.add("negative");
-            }
-            if (data == 0) {
-                data = `±${data}`;
-                elem.classList.add("zero");
-            }
-        }
-
-        elem.textContent = data;
-    }
-}
-
-async function updateCharacterSkills(cID, jobClass, data) {
-    for (let skill of data) {
-        const skillID = slugify(skill.name);
-        let elem = document.getElementById(`${cID}-skills-${skillID}`);
-        if (elem === null) {
-            await addSkillEntry(cID, jobClass, skillID);
-        }
-        for (let key in skill) {
-            updateCharacterData(`${cID}-skills-${skillID}`, `skill-${key}`, skill[key]);
-        }
-    }
-}
-
-async function updateClassMechanic(cID, num) {
-    /** @type {HTMLCanvasElement} */
-    let canvas = document.getElementById(`${cID}-class-mech-${num}`);
-    /** @type {CanvasRenderingContext2D} */
-    let ctx = canvas.getContext("2d");
-
-    const width = canvas.width = 81;
-    const height = canvas.height = 32;
-    ctx.clearRect(0, 0, width, height);
-    ctx.imageSmoothingEnabled = false;
-
-    const current = 100;
-    const max = 100;
-    const y = 16;
-
-    const numPos = { x: width - 45, y: y + 2 };
-    drawBar(ctx, 0, y, width, current, max, "hsl(51 100 50%)", await loadImage(`/assets/textures/mp-label.png`)).then(() => {
-        writeSmall(ctx, numPos.x, numPos.y, `${' '.repeat(3 - current.toString().length)}${current}/${' '.repeat(3 - max.toString().length)}${max}`);
-    });
-}
-
-/**
- * 
- * @param {string} cID 
- * @param {{ [key: string]: Buff }} buffs 
- */
-async function updateBuffs(cID, buffs) {
-    /** @type {HTMLCanvasElement} */
-    let canvas = document.getElementById(`${cID}-buffs-canvas`);
-    /** @type {CanvasRenderingContext2D} */
-    let ctx = canvas.getContext("2d");
-
-    const width = canvas.width = 72;
-    const height = canvas.height = 23;
-    ctx.clearRect(0, 0, width, height);
-    ctx.imageSmoothingEnabled = false;
-
-    const y = 3;
-    let x = (width / 2) - (12 * Object.keys(buffs).length / 2);
-    for (let b in buffs) {
-        let buff = buffs[b];
-        let buffIconPath = `/assets/images/buffs/${buff.icon}.png`;
-        let buffIcon = await loadImage(buffIconPath);
-        ctx.drawImage(buffIcon, x, y);
-        writeSmall(ctx, x + 3, y + (buff.icon.match(/-down/) ? -3 : 13), buff.turnsRemaining);
-        x += 12;
-    }
-}
-
-async function updateGems(cID, gems) {
-
-}
 
 connectingToServer.then(() => {
     sendMessage("session", "ping");
@@ -338,7 +359,7 @@ function handleSessionMessage(msg) {
 function addAllCharacters(msg) {
     msg.chars.forEach(async c => {
         if (!(c.name in characters)) {
-            await addFullSheet(slugify(c.name));
+            //await addFullSheet(slugify(c.name));
         }
         await updateCharacter(new SessionCharacter(c));
     });
@@ -358,48 +379,10 @@ function handleNoSession() {
 }
 sessionCallbacks["nosession"] = handleNoSession;
 
-function handleNoSessionCharacters(msg) {
-    let characterNames = msg.charNames;
-
-    const noSessionHTML = `
-    <span>No session is currently active.</span>
-    <span class="dm-only"><br><br>Would you like to start one?</span>
-    <div class="dm-only" id="dm-char-list">
-    ${characterNames.map(name => `
-        <input type="checkbox" data-name="${name}" id="session-${name}">
-        <label for="session-${name}">${name}</label>`).join("<br>")}
-        </div>
-        <button class="dm-only" onclick="startSessionButton()">Begin</button>`;
-
-    let element = document.createElement("div");
-    element.classList.add("box");
-    element.id = "no-session";
-    element.innerHTML = noSessionHTML;
-    charactersElement.append(element);
-}
-sessionCallbacks["charnames"] = handleNoSessionCharacters;
-
-function startSessionButton() {
-    let charList = document.getElementById("dm-char-list");
-    let selectedChars = [...charList.querySelectorAll("input:checked")].map(e => `"${e.dataset.name}"`);
-    sendConsoleCommand(`session new ${selectedChars.join(" ")}`);
-    // sendMessage("session", "start", { chars: selectedChars });
-}
-
 function startSession() {
     document.getElementById("no-session")?.remove();
     sendMessage("session", "chardata");
 }
 sessionCallbacks["start"] = startSession;
-
-function handleUpdateMessage(msg) {
-
-}
-
-
-function handleNewTurn(msg) {
-    addAllCharacters(msg);
-}
-sessionCallbacks["turn"] = handleNewTurn;
 
 messageCallbacks["session"] = handleSessionMessage;

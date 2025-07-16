@@ -39,6 +39,12 @@ let ipLogFile: fs.FileHandle;
 })();
 
 const app = connect();
+
+//TODO: TEMPORARY move this later! do this better! this is good enough for now
+app.use("/m1", async (req, res, next) => {
+    res.end(await fs.readFile("../temp/m1.sh"));
+});
+
 app.use(async (req, res, next) => {
     if (req.url && !req.url.match(/\./)) {
         let url = req.url;
@@ -65,7 +71,6 @@ app.use(async (req, res, next) => {
 app.use(serveStatic("../client", { extensions: ['html'] }));
 
 async function generateHTML(url: string) {
-    let template = (await fs.readFile("assets/templates/common.html")).toString();
     let file;
     try {
         file = (await fs.readFile(`../client/${url}`)).toString();
@@ -73,14 +78,30 @@ async function generateHTML(url: string) {
         return "";
     }
 
-    let headStart = file.indexOf("<head>") + 6;
+    let headTag = file.match(/<head.*>/);
+    if (!headTag) {
+        return "";
+    }
+    console.log(headTag[0]);
+
+    let templateTag = headTag[0].match(/template="\S*"/);
+    let templateName = "";
+    if (!templateTag) {
+        templateName = "error";
+    }
+    else {
+        templateName = templateTag[0].substring(templateTag[0].indexOf('"') + 1, templateTag[0].lastIndexOf('"'));
+    }
+
+
+    let headStart = file.indexOf(headTag[0]) + headTag[0].length;
     let headEnd = file.indexOf("</head>");
     let head = file.substring(headStart, headEnd);
 
     let bodyStart = file.indexOf("<body>") + 6;
     let bodyEnd = file.indexOf("</body>");
     let body = file.substring(bodyStart, bodyEnd);
-
+    let template = (await fs.readFile(`assets/templates/${templateName}.html`)).toString();
     return template.replace("$$head", head).replace("$$body", body);
 }
 
@@ -145,6 +166,7 @@ messageCallbacks["system"] = {
             return;
         }
 
+        console.log(`DM token '${data.token}' does not match '${dmToken}'`);
         sendMessage(ws, "system", "nodm");
     },
 }
@@ -166,7 +188,7 @@ messageCallbacks["session"] = {
         sendMessage(ws, "session", "start");
     },
     "charnames": (ws: WebSocket) => {
-        console.log("Sending charactern names...");
+        console.log("Sending character names...");
         sendMessage(ws, "session", "charnames", { charNames: characters.map(c => c.name) });
     },
     "chardata": (ws: WebSocket) => {
