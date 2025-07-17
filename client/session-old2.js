@@ -222,6 +222,7 @@ async function drawPartyMember(cID) {
 
         party.appendChild(canvas);
     }
+    /** @type {CanvasRenderingContext2D} */
     let ctx = canvas.getContext("2d");
 
     let character = characters[cID];

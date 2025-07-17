@@ -1,11 +1,18 @@
 "use strict";
 
-class Rect {
+import { Vector2 } from "/scripts/modules/vector2.js";
+
+export class Rect {
 	/** @type {Vector2} */
 	position;
 
 	/** @type {Vector2} */
 	size;
+
+	constructor(x, y, w, h) {
+		this.position = new Vector2(x, y);
+		this.size = new Vector2(w, h);
+	}
 
 	/** @type {number} */
 	get left() {

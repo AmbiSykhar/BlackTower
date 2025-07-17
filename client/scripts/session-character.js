@@ -1,4 +1,4 @@
-class SessionCharacter {
+export class SessionCharacter {
     static baseHP = 10;
     static baseMP = 10;
     static baseStrength = 5;
@@ -20,7 +20,6 @@ class SessionCharacter {
         this.mpPotions = serverCharacter.mpPotions;
         this.equippedClass = serverCharacter.equippedClass;
         this.buffs = serverCharacter.buffs;
-        this.gems = serverCharacter.gems;
         this.tempStats = serverCharacter.tempStats;
     }
 
@@ -95,8 +94,6 @@ class SessionCharacter {
     equippedClass = null;
     /** @type {{ [key: string]: Buff }} */
     buffs = {};
-    /** @type {Gem[]} */
-    gems = [null, null, null, null, null, null, null];
 
     /** @type {{ [id: string]: number }} */
     tempStats = {};
@@ -111,10 +108,4 @@ class Buff {
     description = "";
     icon = "";
     turnsRemaining = 0;
-}
-
-class Gem {
-    name = "";
-    description = "";
-    color = "";
 }

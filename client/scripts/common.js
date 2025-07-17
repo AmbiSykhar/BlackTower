@@ -52,7 +52,7 @@ export function getMousePosInCanvas(canvas, ctx) {
     return null;
 }
 
-function slugify(str) {
+export function slugify(str) {
     return str.replace(/\s/g, "");
 }
 
