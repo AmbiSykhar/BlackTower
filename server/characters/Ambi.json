@@ -3,25 +3,25 @@
 	"pronouns": {
 		"subject": "sy",
 		"object": "syr",
-		"possessiveSubject": "syn",
-		"possessiveObject": "synyr",
+		"possessiveSubject": "syr",
+		"possessiveObject": "syr",
 		"reflexive": "syrself"
 	},
 	"species": "Dragon",
 	"player": "Alayna",
-	"biography": "A black and purple dragoness with golden eyes and steeped in the arcane arts. She entered the tower to study its enchantments and learn its secrets...",
+	"biography": "A black and purple dragoness with golden eyes and steeped in the arcane arts. Sy entered the tower to study its enchantments and learn its secrets...",
 	"image": "/assets/images/ambi.png",
 	"runsWon": 0,
 	"runsPlayed": 0,
 	"specialtyClass": {
-		"name": "Vismaster",
-		"description": "A master of energy magic. Capable of storing energy to release it in a different form.",
+		"name": "Visweaver",
+		"description": "A master of energy magic. Capable of weaving magical energies into physical form.",
 		"hp": 0,
 		"mp": 20,
-		"strength": -3,
-		"magic": 5,
-		"defense": -2,
-		"resistance": 3,
+		"strength": -1,
+		"magic": 4,
+		"defense": -3,
+		"resistance": 2,
 		"skills": [
 			{
 				"name": "Test Skill",
@@ -37,21 +37,6 @@
 				"name": "Test Skill 3",
 				"description": "This is just a third test skill",
 				"mpCost": 999
-			},
-			{
-				"name": "Store Energy",
-				"description": "Absorb energy from your surroundings, gaining +5 Stored Energy.",
-				"mpCost": 2
-			},
-			{
-				"name": "Transpose",
-				"description": "Convert your own energy into Stored Energy, losing 10 MP, and gaining +10 Stored Energy.",
-				"mpCost": 10
-			},
-			{
-				"name": "Ignite",
-				"description": "Expend 5 Stored Energy all at once to spark a flame",
-				"mpCost": 0
 			}
 		]
 	}
