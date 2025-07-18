@@ -1,0 +1,27 @@
+{
+	"name": "Loki",
+	"pronouns": {
+		"subject": "she",
+		"object": "her",
+		"possessiveSubject": "her",
+		"possessiveObject": "hers",
+		"reflexive": "herself"
+	},
+	"species": "Fox/Fae",
+	"player": "Wasabi_Raptor",
+	"biography": "fox",
+	"image": "",
+	"runsWon": 0,
+	"runsPlayed": 0,
+	"specialtyClass": {
+		"name": "Fae Witch",
+		"description": "fox",
+		"hp": 0,
+		"mp": 0,
+		"strength": 0,
+		"magic": 0,
+		"defense": 0,
+		"resistance": 0,
+		"skills": []
+	}
+}
