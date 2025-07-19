@@ -60,6 +60,10 @@ export function getRandomNumber(min, max) {
     return (max - min) * Math.random() + min;
 }
 
+export function clamp(value, min, max) {
+    return Math.max(Math.min(value, max), min);
+}
+
 export function loadImage(path) {
     return new Promise(resolve => {
         let image = new Image();
