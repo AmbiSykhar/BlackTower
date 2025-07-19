@@ -53,4 +53,7 @@ class Character {
     runsWon = 0;
     runsPlayed = 0;
     specialtyClass = new JobClass();
+
+    portrait = null;
+    portraitName = null;
 }

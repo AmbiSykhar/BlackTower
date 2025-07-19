@@ -103,7 +103,7 @@ export class TowerCanvas {
 
 	/**
 	 * Draws a rectangular box.
-	 * @param  {Rect | Vector2[2]} args 
+	 * @param  {Rect | Vector2[2]. number, string, string} args 
 	 */
 	drawBox(...args) {
 		let pos, size;
@@ -205,26 +205,31 @@ export class TowerCanvas {
 	static #loadingPortraitFrame = loadImage("/assets/textures/portrait-frame.png");
 	static #loadingPortraitBackground = loadImage("/assets/textures/portrait-background.png");
 
-	async drawPlayerHUD(character, pos) {
-		let loadingPortrait = loadImage(`/assets/images/${character.name}/portrait.png`);
-		let loadingPortraitName = loadImage(`/assets/images/${character.name}/name.png`);
-
+	async drawPlayerHUD(character, pos, bgColor, hpColor, mpColor) {
 		this.drawImage(await TowerCanvas.#loadingPortraitFrame, pos);
+
 		this.drawImage(await TowerCanvas.#loadingPortraitBackground, pos);
+
+		const gco = this.#context.globalCompositeOperation;
+		const tf = this.#context.getTransform();
+
+		this.#context.globalCompositeOperation = "overlay";
+		this.#context.transform(1, 0, 0.5, 1, pos.x + 2, pos.y + 33);
+		this.drawBox(new Vector2(0, 0), new Vector2(59, 42), 0, "transparent", bgColor);
+
+		this.#context.setTransform(tf);
+		this.#context.globalCompositeOperation = gco;
+
 		// TODO: Background color
-		try {
-			this.drawImage(await loadingPortrait, pos);
-		} catch {
-			console.error(`Cannot find portrait for character '${character.name}'!`);
+		if (character.portrait != null) {
+			this.drawImage(character.portrait, pos);
 		}
-		try {
-			this.drawImage(await loadingPortraitName, new Vector2(0, 0));
-		} catch {
-			console.error(`Cannot find portrait name for character '${character.name}'!`);
+		if (character.portraitName != null) {
+			this.drawImage(character.portraitName, pos);
 		}
 
-		this.drawHUDBar('label', new Vector2(pos.x + 24, pos.y + 75), "#00cc00", character.currentHP, character.maxHP);
-		this.drawHUDBar('label', new Vector2(pos.x + 28, pos.y + 83), "#00bbbb", character.currentMP, character.maxMP);
+		this.drawHUDBar('label', new Vector2(pos.x + 24, pos.y + 75), hpColor, character.currentHP, character.maxHP);
+		this.drawHUDBar('label', new Vector2(pos.x + 28, pos.y + 83), mpColor, character.currentMP, character.maxMP);
 
 		let numHP = `${' '.repeat(3 - character.currentHP.toString().length)}${character.currentHP}/${' '.repeat(3 - character.maxHP.toString().length)}${character.maxHP}`;
 		let numMP = `${' '.repeat(3 - character.currentMP.toString().length)}${character.currentMP}/${' '.repeat(3 - character.maxMP.toString().length)}${character.maxMP}`;

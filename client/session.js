@@ -10,29 +10,19 @@ const canvas = new TowerCanvas("canvas", new Vector2(576, 360));
 /** @type {{ [charID: string]: SessionCharacter }} */
 let characters = {};
 
-const sessionCallbacks = {};
-
-let loadingPortraitFrame = loadImage("/assets/textures/portrait-frame.png");
-let loadingPortraitBackground = loadImage("/assets/textures/portrait-background.png");
-
-async function drawPlayerHUD(character, pos) {
-	let loadingPortrait = loadImage(`/assets/images/${character.name}/portrait.png`);
-	let loadingPortraitName = loadImage(`/assets/images/${character.name}/name.png`);
-
-	canvas.drawImage(await loadingPortraitFrame, new Vector2(0, 0));
-	canvas.drawImage(await loadingPortraitBackground, new Vector2(0, 0));
-	// TODO: Background color
-	try {
-		canvas.drawImage(await loadingPortrait, new Vector2(0, 0));
-	} catch {
-		console.error(`Cannot find portrait for character '${character.name}'!`);
+async function mainLoop() {
+	canvas.clear();
+	let ci = 0;
+	for (const c of Object.values(characters)) {
+		await canvas.drawPlayerHUD(c, new Vector2(0, 96 * ci), "#cc00cc", "#00cc00", "#00bbbb");
+		ci++;
 	}
-	try {
-		canvas.drawImage(await loadingPortraitName, new Vector2(0, 0));
-	} catch {
-		console.error(`Cannot find portrait name for character '${character.name}'!`);
-	}
+
+	requestAnimationFrame(mainLoop);
 }
+mainLoop();
+
+const sessionCallbacks = {};
 
 /**
  * 
@@ -58,15 +48,10 @@ async function updateCharacter(c) {
 		//updateCharacterData(cID, key, c[key]);
 	}
 
-	// TEMP
-	//updateBar(cID, "hp", c.currentHP, c.maxHP, c.hpPotions, SessionCharacter.maxHPPotions);
-	//updateBar(cID, "mp", c.currentMP, c.maxMP, c.mpPotions, SessionCharacter.maxMPPotions);
-	//updateClassMechanic(cID, 1);
-	//updateClassMechanic(cID, 2);
-	//updateGems(cID, c.gems);
-	//updateBuffs(cID, c.buffs);
+	loadImage(`/assets/images/${c.name}/portrait.png`).then(p => c.portrait = p);
+	loadImage(`/assets/images/${c.name}/name.png`).then(n => c.portraitName = n);
 
-	canvas.drawPlayerHUD(c, new Vector2(0, 0));
+	//canvas.drawPlayerHUD(c, new Vector2(0, 0));
 
 	fixCenterText();
 }
