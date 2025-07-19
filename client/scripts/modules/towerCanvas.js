@@ -1,6 +1,6 @@
 import { Vector2 } from "/scripts/modules/vector2.js";
 import { Rect } from "/scripts/modules/rect.js";
-import { loadImage } from "/scripts/common.js";
+import { loadImage, clamp } from "/scripts/common.js";
 
 export class TowerCanvas {
 	/** @type {HTMLCanvasElement} */
@@ -205,7 +205,7 @@ export class TowerCanvas {
 	static #loadingPortraitFrame = loadImage("/assets/textures/portrait-frame.png");
 	static #loadingPortraitBackground = loadImage("/assets/textures/portrait-background.png");
 
-	async drawPlayerHUD(character, pos, bgColor, hpColor, mpColor) {
+	async drawPlayerHUD(character, pos, bgColor, hpArgs, mpArgs) {
 		this.drawImage(await TowerCanvas.#loadingPortraitFrame, pos);
 
 		this.drawImage(await TowerCanvas.#loadingPortraitBackground, pos);
@@ -228,8 +228,12 @@ export class TowerCanvas {
 			this.drawImage(character.portraitName, pos);
 		}
 
-		this.drawHUDBar('label', new Vector2(pos.x + 24, pos.y + 75), hpColor, character.currentHP, character.maxHP);
-		this.drawHUDBar('label', new Vector2(pos.x + 28, pos.y + 83), mpColor, character.currentMP, character.maxMP);
+		this.drawHUDBar('label', new Vector2(pos.x + 24, pos.y + 75),
+			hpArgs.color, character.currentHP, character.maxHP,
+			hpArgs.delay, hpArgs.delayColor);
+		this.drawHUDBar('label', new Vector2(pos.x + 28, pos.y + 83),
+			mpArgs.color, character.currentMP, character.maxMP,
+			mpArgs.delay, mpArgs.delayColor);
 
 		let numHP = `${' '.repeat(3 - character.currentHP.toString().length)}${character.currentHP}/${' '.repeat(3 - character.maxHP.toString().length)}${character.maxHP}`;
 		let numMP = `${' '.repeat(3 - character.currentMP.toString().length)}${character.currentMP}/${' '.repeat(3 - character.maxMP.toString().length)}${character.maxMP}`;
@@ -250,7 +254,8 @@ export class TowerCanvas {
 	 * @param {number} value 
 	 * @param {number} max 
 	 */
-	async drawHUDBar(type, pos, color, value, max) {
+	async drawHUDBar(type, pos, color, value, max, delayValue = null, delayColor = "transparent") {
+		delayValue = delayValue ?? value;
 		let rowOffsets;
 		switch (type) {
 			case 'label':
@@ -270,26 +275,40 @@ export class TowerCanvas {
 		// apply color
 		const gco = this.#context.globalCompositeOperation;
 
+		// normal fill
 		const p = value / max;
-		const fill = 59 * p;
+		const dp = delayValue / max;
+
+		const fill = 61 * Math.min(p, dp);
+		const delayFill = 61 * Math.max(p, dp);
+
+
 		for (let i = 0; i < 7; i++) {
 			const start = rowOffsets[i];
 
-			const f = 59 - start + i / 2 + 0.5;
-			const w = fill - start + i / 2 + 0.5;
+			const fullX = 58 + i / 2;
+			const fillX = clamp(fill, start, fullX);
+			const delayX = clamp(delayFill, fillX, fullX);
 
 			// fill
-			if (w > 0) {
+			if (fillX > start) {
 				this.#context.fillStyle = color;
 				this.#context.globalCompositeOperation = "overlay";
-				this.#context.fillRect(pos.x + start, pos.y + i, w, 1);
+				this.#context.fillRect(pos.x + start, pos.y + i, fillX - start, 1);
+			}
+
+			// delay
+			if (delayX > fillX) {
+				this.#context.fillStyle = delayColor;
+				this.#context.globalCompositeOperation = "source-over";
+				this.#context.fillRect(pos.x + fillX, pos.y + i, delayX - fillX, 1);
 			}
 
 			// empty
-			if (f - w > 0) {
+			if (fullX > delayX) {
 				this.#context.globalCompositeOperation = "source-over";
 				this.#context.fillStyle = "#494949";
-				this.#context.fillRect(pos.x + start + w, pos.y + i, f - w, 1);
+				this.#context.fillRect(pos.x + delayX, pos.y + i, fullX - delayX, 1);
 			}
 		}
 		this.#context.globalCompositeOperation = gco;
