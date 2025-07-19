@@ -73,7 +73,7 @@ function connectToServer() {
 		});
 
 		socket.addEventListener("message", (event) => {
-			console.log("Message from server:\n\t", event.data);
+			// console.log("Message from server:\n\t", event.data);
 			let data = JSON.parse(event.data);
 			messageCallbacks[data.category]?.[data.type]?.(data);
 		});
@@ -91,7 +91,7 @@ export let connectingToServer = connectToServer();
 export function sendMessage(category, type, data = {}) {
 	let obj = { category, type, ...data };
 	let json = JSON.stringify(obj);
-	console.log("Sending to server:\n\t" + json);
+	// console.log("Sending to server:\n\t" + json);
 	socket.send(json);
 }
 
