@@ -10,6 +10,9 @@ import { WebSocket, WebSocketServer } from 'ws';
 import { Character, JobClass, JobClasses, PronounList } from 'types/character';
 import { SessionCharacter, Buff, Gem } from 'types/session-character';
 import { Session } from 'types/session';
+import { Jukebox } from 'types/jukebox';
+
+let jukebox = new Jukebox();
 
 const startTime = Date.now();
 
@@ -665,6 +668,37 @@ dmCommands.set("potion", (ws: WebSocket, args: string[]) => {
     }
     sendConsoleLog(ws, `${cName} has used a ${resource.toUpperCase()} potion`);
     broadcast("session", "char", { char: character });
+})
+
+dmCommands.set("music", (ws: WebSocket, args: string[]) => {
+    switch (args[0]) {
+        case "queue":
+            if (typeof args[1] == "string")
+                if (jukebox.queueLoad(args[1]))
+                    return;
+
+            sendConsoleLog(ws, `invalid music ID`);
+            return;
+        case "play":
+            if (typeof args[1] == "string")
+                if (jukebox.setPlaying(args[1])) {
+                    return;
+                } else {
+                    sendConsoleLog(ws, `Music ${args[1]} is not currently loaded.`);
+                    return;
+                }
+            sendConsoleLog(ws, `invalid music ID`);
+            return;
+        case "pause":
+            jukebox.togglePause()
+            return;
+        case "stop":
+            jukebox.stopMusic()
+            return;
+        default:
+            sendConsoleLog(ws, `music commands are:\nmusic queue <id>\nmusic play <id>\nmusic pause\nmusic stop`);
+            return;
+    }
 })
 
 function ActivateBuff(character: SessionCharacter, actions: { stat: string, num: number }[]) {
