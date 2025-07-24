@@ -115,4 +115,5 @@ messageCallbacks.music.play = (data) => {
 messageCallbacks.music.load = (data) => {
 	Jukebox.load(data.id);
 }
-messageCallbacks.music.pause = Jukebox.pause;
+messageCallbacks.music.pause = () => Jukebox.pause();
+messageCallbacks.music.stop = () => Jukebox.stop();
