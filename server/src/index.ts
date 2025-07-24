@@ -685,7 +685,7 @@ dmCommands.set("music", (ws: WebSocket, args: string[]) => {
     case "play":
         if (typeof args[1] == "string")
             if (Jukebox.setPlaying(args[1])) {
-                sendConsoleLog(ws, `Playing '${args[1]}'...`)
+                sendConsoleLog(ws, `Playing '${args[1]}'...`);
                 broadcast('music', 'play', { id: args[1] });
                 return;
             } else {
@@ -695,11 +695,11 @@ dmCommands.set("music", (ws: WebSocket, args: string[]) => {
         sendConsoleLog(ws, `invalid music ID`);
         return;
     case "pause":
-        Jukebox.togglePause()
+        Jukebox.togglePause();
         broadcast('music', 'pause');
         return;
     case "stop":
-        Jukebox.stopMusic()
+        Jukebox.stopMusic();
         broadcast('music', 'stop');
         return;
     default:

@@ -49,8 +49,18 @@ export let Jukebox = {
 		let title = document.getElementById("jukebar-title");
 		let sub = document.getElementById("jukebar-sub");
 
+		let subtitleStr = null;
+		if (this.nowPlaying != null) {
+			if (this.nowPlaying.original == null || this.nowPlaying.original == this.nowPlaying.title) {
+				subtitleStr = this.nowPlaying.source;
+			}
+			else {
+				subtitleStr = `${this.nowPlaying.original} - ${this.nowPlaying.source}`;
+			}
+		}
+
 		title.innerText = this.nowPlaying?.title ?? "N/A";
-		sub.innerText = this.nowPlaying?.original ?? "N/A";
+		sub.innerText = subtitleStr ?? "N/A";
 
 		requestAnimationFrame(() => {
 			this.width = Math.max(title.offsetWidth, sub.offsetWidth) + 8;
