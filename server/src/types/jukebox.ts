@@ -1,41 +1,44 @@
+import fs from 'fs';
 
-export class Jukebox {
+let currentlyPlaying: string | null = null;
+let paused: boolean = false;
 
-  musicMap: { [name: string]: string } = {
-    ["Song Name"]: "path/to/file.ogg",
-  }
+let loadQueue: string[] = [];
 
-  currentlyPlaying: string | null = null
-  paused: boolean = false
-
-  loadQueue: Array<string> = []
-
-
+export const Jukebox = {
   queueLoad(id: string): boolean {
-    if (!this.musicMap[id])
-      return false
-    if (!this.loadQueue.includes(id)) {
-      this.loadQueue.push(id)
+    if (!fs.existsSync(`../client/assets/music/${id}.json`))
+      return false;
+    if (!loadQueue.includes(id)) {
+      loadQueue.push(id)
     }
-    return true
-  }
+    return true;
+  },
 
-  setPlaying(id: string):boolean {
-    if (!this.loadQueue.includes(id)) {
+  setPlaying(id: string): boolean {
+    if (!loadQueue.includes(id)) {
       // idk print an error or something
       // probably should be a check for if its loaded or not
-      return false
+      return false;
     }
-    this.currentlyPlaying = id
-    this.paused = false
-    return true
-  }
+    currentlyPlaying = id;
+    paused = false;
+    return true;
+  },
 
   togglePause() {
-    this.paused = !this.paused
-  }
+    paused = !paused;
+  },
 
   stopMusic() {
-    this.currentlyPlaying = null
+    currentlyPlaying = null;
+  },
+
+  isPlaying() {
+    return currentlyPlaying != null && !paused;
+  },
+
+  getCurrent() {
+    return currentlyPlaying;
   }
 }

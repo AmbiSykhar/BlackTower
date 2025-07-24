@@ -15,6 +15,8 @@
 	--shadow-color-trans: rgba(0, 0, 0, var(--box-opacity));
 
 	--text-color: white;
+
+	--jukebar-width: 200px;
 }
 
 @font-face {
@@ -33,7 +35,6 @@ body {
 	background-color: black;
 	font-family: DragonOracle, Verdana;
 	font-size: 200%;
-	transition: background-color 1s;
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -95,7 +96,7 @@ h1 {
 
 .sidebar {
 	position: relative;
-	transition: 1s;
+	transition: 667ms left ease-out, 667ms right ease-out;
 	width: 0;
 	margin-bottom: 8px;
 }
@@ -202,7 +203,7 @@ h1 {
 	padding: 8px 8px;
 	color: var(--text-color);
 	text-shadow: 0.0625em 0.0625em var(--shadow-color);
-	border-color: var(--fallback-color);
+	/* border-color: var(--fallback-color); */
 	border-style: solid;
 	border-image: url("/assets/textures/border.png") 9;
 	border-width: 9px;
@@ -357,4 +358,67 @@ body:not(.dm-mode) .dm-only {
 	width: 184px;
 	height: 122px;
 	image-rendering: pixelated;
+}
+
+.jukebar {
+	position: relative;
+	transition: 667ms left ease-out;
+	width: 0;
+	margin-bottom: 8px;
+	left: 0;
+	direction: ltr;
+}
+
+.jukebar.collapsed {
+	left: calc(var(--jukebar-width) * -1);
+}
+
+.juketab {
+	position: relative;
+	z-index: 1000;
+	background: transparent;
+	border: none;
+	left: var(--jukebar-width);
+	margin-left: -9px;
+}
+
+.juketab-img {
+	height: 63px;
+	width: auto;
+	image-rendering: pixelated;
+	pointer-events: none;
+}
+
+.jukebar-content {
+	background-color: var(--main-color);
+	border-style: solid;
+	/* If any lime is visible here, something has gone horribly wrong. */
+	border-image: url("/assets/textures/jukeborder.png") 6;
+	border-width: 6px;
+	box-sizing: border-box;
+	border-right: 0;
+	border-left: 0;
+	
+	top: 9px;
+	height: 63px;
+	position: fixed;
+	width: fit-content;
+	direction: initial;
+	z-index: 1001;
+	padding-left: 4px;
+	text-shadow: 0.0625em 0.0625em var(--shadow-color);
+
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+}
+
+.jukebar-sub {
+	font-size: 50%;
+}
+
+.jukebox-allow {
+	position: absolute;
+	
+	z-index: 10000;
 }

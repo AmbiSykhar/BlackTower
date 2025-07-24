@@ -12,8 +12,6 @@ import { SessionCharacter, Buff, Gem } from 'types/session-character';
 import { Session } from 'types/session';
 import { Jukebox } from 'types/jukebox';
 
-let jukebox = new Jukebox();
-
 const startTime = Date.now();
 
 interface Indexable {
@@ -155,6 +153,9 @@ messageCallbacks["system"] = {
             console.log("New connection established!");
         }
         sendMessage(ws, "system", "confirm");
+        if (Jukebox.isPlaying()) {
+            sendMessage(ws, "music", "play", { id: Jukebox.getCurrent() });
+        }
         broadcast("system", "viewers", { count: wss.clients.size });
     },
     "dm": (ws: WebSocket, data: { token: number }) => {
@@ -672,32 +673,38 @@ dmCommands.set("potion", (ws: WebSocket, args: string[]) => {
 
 dmCommands.set("music", (ws: WebSocket, args: string[]) => {
     switch (args[0]) {
-        case "queue":
-            if (typeof args[1] == "string")
-                if (jukebox.queueLoad(args[1]))
-                    return;
+    case "queue":
+        if (typeof args[1] == "string")
+            if (Jukebox.queueLoad(args[1])) {
+                broadcast('music', 'load', { id: args[1] });
+                return;
+            }
 
-            sendConsoleLog(ws, `invalid music ID`);
-            return;
-        case "play":
-            if (typeof args[1] == "string")
-                if (jukebox.setPlaying(args[1])) {
-                    return;
-                } else {
-                    sendConsoleLog(ws, `Music ${args[1]} is not currently loaded.`);
-                    return;
-                }
-            sendConsoleLog(ws, `invalid music ID`);
-            return;
-        case "pause":
-            jukebox.togglePause()
-            return;
-        case "stop":
-            jukebox.stopMusic()
-            return;
-        default:
-            sendConsoleLog(ws, `music commands are:\nmusic queue <id>\nmusic play <id>\nmusic pause\nmusic stop`);
-            return;
+        sendConsoleLog(ws, `invalid music ID`);
+        return;
+    case "play":
+        if (typeof args[1] == "string")
+            if (Jukebox.setPlaying(args[1])) {
+                sendConsoleLog(ws, `Playing '${args[1]}'...`)
+                broadcast('music', 'play', { id: args[1] });
+                return;
+            } else {
+                sendConsoleLog(ws, `Music '${args[1]}' is not currently loaded.`);
+                return;
+            }
+        sendConsoleLog(ws, `invalid music ID`);
+        return;
+    case "pause":
+        Jukebox.togglePause()
+        broadcast('music', 'pause');
+        return;
+    case "stop":
+        Jukebox.stopMusic()
+        broadcast('music', 'stop');
+        return;
+    default:
+        sendConsoleLog(ws, `music commands are:\nmusic queue <id>\nmusic play <id>\nmusic pause\nmusic stop`);
+        return;
     }
 })
 

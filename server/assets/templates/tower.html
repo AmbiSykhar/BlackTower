@@ -4,7 +4,7 @@
 <head>
 	<link href="/styles/tower.css" rel="stylesheet" type="text/css" media="all">
 	<script type="module" src="/scripts/common.js" defer></script>
-	<script type="text/javascript" src="/scripts/tower.js" defer></script>
+	<script type="module" src="/scripts/tower.js" defer></script>
 
 	$$head
 </head>
@@ -12,8 +12,25 @@
 <body>
 	<div class="main-layout">
 		<div class="leftbars">
+			<div class="jukebar collapsed" id="jukebar">
+				<button class="juketab" id="juketab">
+					<img src="/assets/textures/juketab.png" alt="" class="juketab-img">
+				</button>
+				<div class="jukebar-content">
+					<span id="jukebar-title">Test Song Name Goes Here</span>
+					<div class="jukebar-sub" id="jukebar-sub">
+						Test Original Name Goes Here - Test Source Name Goes Here
+					</div>
+				</div>
+
+				<dialog class="jukebox-allow" id="jukebox-allow">
+					Audio is not allowed to autoplay by default.<br>
+					Please adjust your permissions manually. (It's probably on the address bar)<br>
+					<button class="jukebox-play" id="jukebox-play">Play music manually</button>
+				</dialog>
+			</div>
 			<div class="sidebar collapsed">
-				<button class="sidebar-tab box" onclick="toggleSidebar(this)">Navigation</button>
+				<button class="sidebar-tab box">Navigation</button>
 				<nav class="sidebar-content box">
 					<div class="navheader">Navigation</div>
 					<ul class="navlist">
@@ -28,7 +45,7 @@
 				</nav>
 			</div>
 			<div class="sidebar collapsed">
-				<button class="sidebar-tab box" onclick="toggleSidebar(this)">Settings</button>
+				<button class="sidebar-tab box">Settings</button>
 				<nav class="sidebar-content box">
 					<div class="navheader">Settings</div>
 					<ul class="navlist">
@@ -40,7 +57,7 @@
 		</div>
 		<div class="rightbars">
 			<div class="sidebar collapsed">
-				<button class="sidebar-tab box" onclick="toggleSidebar(this)">DM Sidebar</button>
+				<button class="sidebar-tab box">DM Sidebar</button>
 				<nav class="sidebar-content box">
 					<div class="navheader">DM Sidebar</div>
 					<ul class="navlist">
