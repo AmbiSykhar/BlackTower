@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 let currentlyPlaying: string | null = null;
+let currentSectionIndex = 0;
 let paused: boolean = false;
 
 let loadQueue: string[] = [];
@@ -22,8 +23,13 @@ export const Jukebox = {
       return false;
     }
     currentlyPlaying = id;
+    currentSectionIndex = 0;
     paused = false;
     return true;
+  },
+
+  nextSection() {
+    currentSectionIndex++;
   },
 
   togglePause() {
@@ -32,6 +38,7 @@ export const Jukebox = {
 
   stopMusic() {
     currentlyPlaying = null;
+    currentSectionIndex = 0;
   },
 
   isPlaying() {
@@ -39,6 +46,6 @@ export const Jukebox = {
   },
 
   getCurrent() {
-    return currentlyPlaying;
+    return { id: currentlyPlaying, section: currentSectionIndex };
   }
 }

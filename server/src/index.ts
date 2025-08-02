@@ -154,7 +154,7 @@ messageCallbacks["system"] = {
         }
         sendMessage(ws, "system", "confirm");
         if (Jukebox.isPlaying()) {
-            sendMessage(ws, "music", "play", { id: Jukebox.getCurrent() });
+            sendMessage(ws, "music", "play", Jukebox.getCurrent());
         }
         broadcast("system", "viewers", { count: wss.clients.size });
     },
@@ -693,6 +693,10 @@ dmCommands.set("music", (ws: WebSocket, args: string[]) => {
                 return;
             }
         sendConsoleLog(ws, `invalid music ID`);
+        return;
+    case "next":
+        Jukebox.nextSection();
+        broadcast('music', 'next');
         return;
     case "pause":
         Jukebox.togglePause();
