@@ -47,5 +47,9 @@ export const Jukebox = {
 
   getCurrent() {
     return { id: currentlyPlaying, section: currentSectionIndex };
-  }
+  },
+
+  getQueue() {
+    return loadQueue;
+  },
 }

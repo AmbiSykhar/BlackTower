@@ -732,9 +732,16 @@ function ActivateBuff(character: SessionCharacter, actions: { stat: string, num:
     }
 }
 
+function sendReply(ws: WebSocket, requestID: number, data: any) {
+    sendMessage(ws, "request", "reply", { requestID: requestID, ...data });
+}
+
 messageCallbacks["request"] = {
     "charnames": (ws: WebSocket, data: any) => {
         console.log("Sending character names...");
-        sendMessage(ws, "request", "reply", { requestID: data.requestID, charNames: characters.map(c => c.name) });
+        sendReply(ws, data.requestID, { charNames: characters.map(c => c.name) });
     },
+    "musqueue": (ws: WebSocket, data: any) => {
+        sendReply(ws, data.requestID, { queue: Jukebox.getQueue() });
+    }
 }

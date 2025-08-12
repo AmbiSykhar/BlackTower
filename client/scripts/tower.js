@@ -34,14 +34,20 @@ async function initializePopup(template) {
 	dmPopup.innerHTML = await html.text();
 	popupScript = await import(`/assets/popups/${template}.js`);
 	popupScript.initialize();
-}
-
-
-async function promptStart() {
-	initializePopup("start-session");
 	dmPopup.showModal();
 }
 
+function initializeDMButton(id, action) {
+	if (action === "popup") {
+		action = () => { initializePopup(id); };
+	}
 
-document.getElementById("start-session").addEventListener('click', promptStart);
-document.getElementById("end-session").addEventListener('click', () => { sendConsoleCommand("session end"); });
+	document.getElementById(id).addEventListener('click', action);
+}
+
+initializeDMButton("start-session", "popup");
+initializeDMButton("end-session", () => { sendConsoleCommand("session end"); });
+initializeDMButton("queue-music", "popup");
+initializeDMButton("play-music", "popup");
+initializeDMButton("pause-music", () => { sendConsoleCommand("music pause"); });
+initializeDMButton("stop-music", () => { sendConsoleCommand("music stop"); });
