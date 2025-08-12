@@ -6,6 +6,7 @@ const serverURL = `ws${(window.location.hostname != "localhost" ? "s" : "")}://$
 
 export let messageCallbacks = {
 	"system": {},
+	"request": {},
 };
 
 /** @type {WebSocket} */
@@ -25,6 +26,28 @@ const startTime = Date.now();
  */
 let socketStatus = localStorage.getItem("refreshing") ? "refreshing" : "starting";
 let socketConnectStart = 0;
+
+let nextRequestID = 0;
+let activeRequests = {};
+
+export function request(type, data = {}) {
+	let id = nextRequestID++;
+	let p = new Promise((resolve, reject) => {
+		activeRequests[id] = resolve;
+	});
+
+	data.requestID = id;
+	sendMessage("request", type, data);
+
+	return p;
+}
+
+function resolveRequest(data) {
+	let id = data.requestID;
+	activeRequests[id]?.(data);
+	delete activeRequests[id];
+}
+messageCallbacks.request.reply = resolveRequest;
 
 function connectToServer() {
 	return new Promise((resolve, reject) => {
@@ -94,8 +117,3 @@ export function sendMessage(category, type, data = {}) {
 	// console.log("Sending to server:\n\t" + json);
 	socket.send(json);
 }
-
-function handleSystemMessage(msg) {
-	systemCallbacks[msg.type]?.(msg);
-}
-//messageCallbacks["system"] = handleSystemMessage;

@@ -731,3 +731,10 @@ function ActivateBuff(character: SessionCharacter, actions: { stat: string, num:
         }
     }
 }
+
+messageCallbacks["request"] = {
+    "charnames": (ws: WebSocket, data: any) => {
+        console.log("Sending character names...");
+        sendMessage(ws, "request", "reply", { requestID: data.requestID, charNames: characters.map(c => c.name) });
+    },
+}
