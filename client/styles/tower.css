@@ -417,7 +417,9 @@ body:not(.dm-mode) .dm-only {
 	font-size: 50%;
 }
 
-.jukebox-allow {
+.popup {
+	direction: ltr;
+
 	position: absolute;
 	
 	z-index: 10000;

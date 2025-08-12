@@ -23,7 +23,7 @@
 					</div>
 				</div>
 
-				<dialog class="jukebox-allow" id="jukebox-allow">
+				<dialog class="popup" id="jukebox-allow">
 					Audio is not allowed to autoplay by default.<br>
 					Please adjust your permissions manually. (It's probably on the address bar)<br>
 					<button class="jukebox-play" id="jukebox-play">Play music manually</button>
@@ -61,10 +61,17 @@
 				<nav class="sidebar-content box">
 					<div class="navheader">DM Sidebar</div>
 					<ul class="navlist">
-						<li class="navitem" id="startsession">Start Session</li>
-						<li class="navitem" id="endsession">End Session</li>
+						<li class="navitem">
+							<a href="javascript:void(0)" id="start-session">Start Session</a>
+						</li>
+						<li class="navitem">
+							<a href="javascript:void(0)" id="end-session">End Session</a>
+						</li>
 					</ul>
 				</nav>
+
+				<dialog class="popup" id="dm-popup">
+				</dialog>
 			</div>
 		</div>
 		$$body
