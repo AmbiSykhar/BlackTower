@@ -152,8 +152,8 @@ function addAllCharacters(msg) {
 sessionCallbacks["chardata"] = addAllCharacters;
 
 function handleSessionEnd() {
-	let element = document.getElementById("characters");
-	element.innerHTML = "";
+	canvas.clear();
+
 	characters = {};
 	handleNoSession();
 }
