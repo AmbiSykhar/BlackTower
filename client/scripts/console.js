@@ -149,7 +149,7 @@ function toggleDMMode(value = null) {
  * 
  * @param {string} str 
  */
-function sendConsoleCommand(str) {
+export function sendConsoleCommand(str) {
     let space = str.indexOf(" ");
     let dm = Cookies.get("dm_token") ?? "";
     if (space == -1) {
