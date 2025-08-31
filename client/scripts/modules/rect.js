@@ -9,7 +9,20 @@ export class Rect {
 	/** @type {Vector2} */
 	size;
 
-	constructor(x, y, w, h) {
+	/**
+	 * 
+	 * @param {number | Vector2} x 
+	 * @param {number | Vector2} y 
+	 * @param {number | null} w 
+	 * @param {number | null} h 
+	 * @returns 
+	 */
+	constructor(x, y, w = null, h = null) {
+		if (w == null && h == null) {
+			this.position = x;
+			this.size = y;
+			return;
+		}
 		this.position = new Vector2(x, y);
 		this.size = new Vector2(w, h);
 	}
