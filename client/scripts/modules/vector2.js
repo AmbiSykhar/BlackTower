@@ -30,4 +30,8 @@ export class Vector2 {
 
 		return this.x * 1000000 + this.y;
 	}
+
+	static get Zero() {
+		return new Vector2(0, 0);
+	}
 }
