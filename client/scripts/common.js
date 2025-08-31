@@ -17,7 +17,7 @@ if (document.getElementById("navbar") !== null) {
 // General Utilities
 
 
-let mousePosition = new Vector2(0, 0);
+export let mousePosition = Vector2.Zero;
 /**
  * 
  * @param {MouseEvent} e 

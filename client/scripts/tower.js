@@ -29,11 +29,11 @@ let dmPopup = document.getElementById("dm-popup");
 
 let popupScript = null;
 
-async function initializePopup(template) {
+export async function initializePopup(template, ...args) {
 	let html = await fetch(`/assets/popups/${template}.html`);
 	dmPopup.innerHTML = await html.text();
 	popupScript = await import(`/assets/popups/${template}.js`);
-	popupScript.initialize();
+	popupScript.initialize(...args);
 	dmPopup.showModal();
 }
 

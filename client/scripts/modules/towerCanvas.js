@@ -1,6 +1,7 @@
 import { Vector2 } from "/scripts/modules/vector2.js";
 import { Rect } from "/scripts/modules/rect.js";
-import { loadImage, clamp } from "/scripts/common.js";
+import { loadImage, clamp, mousePosition } from "/scripts/common.js";
+import { PlayerHUD, PlayerHUDBar } from "/scripts/modules/playerHUD.js";
 
 export class TowerCanvas {
 	/** @type {HTMLCanvasElement} */
@@ -50,6 +51,10 @@ export class TowerCanvas {
 		this.#context.imageSmoothingEnabled = false;
 	}
 
+	addClickListener(listener) {
+		this.#canvas.addEventListener("click", listener);
+	}
+
 	/**
 	 * Returns the position of the mouse within the canvas.
 	 * @returns {Vector2 | null}
@@ -65,8 +70,8 @@ export class TowerCanvas {
 			(mousePosition.y - rect.top) * scale.y
 		);
 
-		if (pos.x < rect.left || pos.x > rect.right ||
-			pos.y < rect.top || pos.y > rect.bottom) {
+		if (pos.x < 0 || pos.x > rect.width ||
+			pos.y < 0 || pos.y > rect.height) {
 			return null;
 		}
 
@@ -98,7 +103,7 @@ export class TowerCanvas {
 	 * Clears the entire canvas.
 	 */
 	clear() {
-		this.clearRect(new Vector2(0, 0), this.resolution);
+		this.clearRect(Vector2.Zero, this.resolution);
 	}
 
 	/**
@@ -205,40 +210,41 @@ export class TowerCanvas {
 	static #loadingPortraitFrame = loadImage("/assets/textures/portrait-frame.png");
 	static #loadingPortraitBackground = loadImage("/assets/textures/portrait-background.png");
 
-	async drawPlayerHUD(character, pos, bgColor, hpArgs, mpArgs) {
-		this.drawImage(await TowerCanvas.#loadingPortraitFrame, pos);
+	/**
+	 * 
+	 * @param {PlayerHUD} hud 
+	 */
+	async drawPlayerHUD(hud) {
+		this.drawImage(await TowerCanvas.#loadingPortraitFrame, hud.position);
 
-		this.drawImage(await TowerCanvas.#loadingPortraitBackground, pos);
+		this.drawImage(await TowerCanvas.#loadingPortraitBackground, hud.position);
 
 		const gco = this.#context.globalCompositeOperation;
 		const tf = this.#context.getTransform();
 
 		this.#context.globalCompositeOperation = "overlay";
-		this.#context.transform(1, 0, 0.5, 1, pos.x + 2, pos.y + 33);
-		this.drawBox(new Vector2(0, 0), new Vector2(59, 42), 0, "transparent", bgColor);
+		this.#context.transform(1, 0, 0.5, 1, hud.position.x + 2, hud.position.y + 33);
+		this.drawBox(Vector2.Zero, new Vector2(59, 42), 0, "transparent", hud.backgroundColor);
 
 		this.#context.setTransform(tf);
 		this.#context.globalCompositeOperation = gco;
 
 		// TODO: Background color
-		if (character.portrait != null) {
-			this.drawImage(character.portrait, pos);
+		if (hud.portrait != null) {
+			this.drawImage(hud.portrait, hud.position);
 		}
-		if (character.portraitName != null) {
-			this.drawImage(character.portraitName, pos);
+		if (hud.portraitName != null) {
+			this.drawImage(hud.portraitName, hud.position);
 		}
 
-		this.drawHUDBar('label', new Vector2(pos.x + 24, pos.y + 75),
-			hpArgs.color, character.currentHP, character.maxHP,
-			hpArgs.delay, hpArgs.delayColor);
-		this.drawHUDBar('label', new Vector2(pos.x + 28, pos.y + 83),
-			mpArgs.color, character.currentMP, character.maxMP,
-			mpArgs.delay, mpArgs.delayColor);
+		this.drawHUDBar(hud.hpBar, new Vector2(hud.position.x + 24, hud.position.y + 75));
+		this.drawHUDBar(hud.mpBar, new Vector2(hud.position.x + 28, hud.position.y + 83));
 
-		let numHP = `${' '.repeat(3 - character.currentHP.toString().length)}${character.currentHP}/${' '.repeat(3 - character.maxHP.toString().length)}${character.maxHP}`;
-		let numMP = `${' '.repeat(3 - character.currentMP.toString().length)}${character.currentMP}/${' '.repeat(3 - character.maxMP.toString().length)}${character.maxMP}`;
-		this.writeSmall(new Vector2(pos.x + 45, pos.y + 77), numHP);
-		this.writeSmall(new Vector2(pos.x + 49, pos.y + 85), numMP);
+		// draw numbers after both bars to get the proper layering
+		let numHP = `${' '.repeat(3 - hud.player.currentHP.toString().length)}${hud.player.currentHP}/${' '.repeat(3 - hud.player.maxHP.toString().length)}${hud.player.maxHP}`;
+		let numMP = `${' '.repeat(3 - hud.player.currentMP.toString().length)}${hud.player.currentMP}/${' '.repeat(3 - hud.player.maxMP.toString().length)}${hud.player.maxMP}`;
+		this.writeSmall(new Vector2(hud.position.x + 45, hud.position.y + 77), numHP);
+		this.writeSmall(new Vector2(hud.position.x + 49, hud.position.y + 85), numMP);
 	}
 	static #loadingBarFillTextures = {
 		none: loadImage("assets/textures/bar-fill-none.png"),
@@ -248,16 +254,13 @@ export class TowerCanvas {
 
 	/**
 	 * 
-	 * @param {string} type Possible values: 'none', 'label', 'segment'
-	 * @param {Vector2} pos 
-	 * @param {string} color 
-	 * @param {number} value 
-	 * @param {number} max 
+	 * @param {PlayerHUDBar} bar
+	 * @param {Vector2} pos
 	 */
-	async drawHUDBar(type, pos, color, value, max, delayValue = null, delayColor = "transparent") {
-		delayValue = delayValue ?? value;
+	async drawHUDBar(bar, pos) {
+		let delayValue = bar.delayValue ?? bar.value;
 		let rowOffsets;
-		switch (type) {
+		switch (bar.type) {
 			case 'label':
 				rowOffsets = [5, 5, 5, 4, 2, 2, 3];
 				break;
@@ -270,14 +273,14 @@ export class TowerCanvas {
 
 
 		// apply texture
-		this.drawImage(await TowerCanvas.#loadingBarFillTextures[type], pos);
+		this.drawImage(await TowerCanvas.#loadingBarFillTextures[bar.type], pos);
 
 		// apply color
 		const gco = this.#context.globalCompositeOperation;
 
 		// normal fill
-		const p = value / max;
-		const dp = delayValue / max;
+		const p = bar.value / bar.max;
+		const dp = delayValue / bar.max;
 
 		const fill = 61 * Math.min(p, dp);
 		const delayFill = 61 * Math.max(p, dp);
@@ -292,14 +295,14 @@ export class TowerCanvas {
 
 			// fill
 			if (fillX > start) {
-				this.#context.fillStyle = color;
+				this.#context.fillStyle = bar.color;
 				this.#context.globalCompositeOperation = "overlay";
 				this.#context.fillRect(pos.x + start, pos.y + i, fillX - start, 1);
 			}
 
 			// delay
 			if (delayX > fillX) {
-				this.#context.fillStyle = delayColor;
+				this.#context.fillStyle = bar.delayColor;
 				this.#context.globalCompositeOperation = "source-over";
 				this.#context.fillRect(pos.x + fillX, pos.y + i, delayX - fillX, 1);
 			}
