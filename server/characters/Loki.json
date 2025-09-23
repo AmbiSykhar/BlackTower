@@ -7,21 +7,21 @@
 		"possessiveObject": "hers",
 		"reflexive": "herself"
 	},
-	"species": "Fox/Fae",
-	"player": "Wasabi_Raptor",
-	"biography": "fox",
+	"species": "Faerie Deerfox",
+	"player": "Vivian",
+	"biography": "A witch who typically trades in potions, charms, and deals.",
 	"image": "",
 	"runsWon": 0,
 	"runsPlayed": 0,
 	"specialtyClass": {
-		"name": "Fae Witch",
-		"description": "fox",
-		"hp": 0,
-		"mp": 0,
-		"strength": 0,
-		"magic": 0,
-		"defense": 0,
-		"resistance": 0,
+		"name": "Autumn Witch",
+		"description": "A Fae witch with the ability to control fire and command plants, though exerting this influence causes the subject to slowly wither, with plants that thrive in fall proving more resistant to this side effect.",
+		"hp": 10,
+		"mp": 50,
+		"strength": 3,
+		"magic": 5,
+		"defense": 2,
+		"resistance": 4,
 		"skills": []
 	}
 }

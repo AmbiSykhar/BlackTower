@@ -1,0 +1,27 @@
+{
+	"name": "Mary McIntyre",
+	"pronouns": {
+		"subject": "she",
+		"object": "her",
+		"possessiveSubject": "her",
+		"possessiveObject": "hers",
+		"reflexive": "herself"
+	},
+	"species": "Rabbit",
+	"player": "Amber",
+	"biography": "A doctor and apothecary who made a terrible mistake on a patient, and was cursed fittingly by a powerful witch the late patient knew: any living thing withers at her touch. Mary has exhausted all options for lifting the curse, and left with the choice between total ruin and an adventure with a slim chance of success, she chose the latter. Surely anyone powerful enough to make the Tower would have some means to break curses…",
+	"image": "",
+	"runsWon": 0,
+	"runsPlayed": 0,
+	"specialtyClass": {
+		"name": "Death-Cursed Apothecary",
+		"description": "A specialist in support and healing—from a distance. Provides beneficial potions and such to allies with varying effects, or equally varied harmful things for enemies. At melee range, can lethally poison with her touch.",
+		"hp": 20,
+		"mp": 40,
+		"strength": 1,
+		"magic": 5,
+		"defense": 3,
+		"resistance": 5,
+		"skills": []
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"name": "Dust",
+	"pronouns": {
+		"subject": "it",
+		"object": "it",
+		"possessiveSubject": "its",
+		"possessiveObject": "its",
+		"reflexive": "itself"
+	},
+	"species": "Monster",
+	"player": "Umbriel",
+	"biography": "A wild monster who was experimented on by a crazed mage, leaving it with greater sentience and intellegence before it escaped. It desires to share this boon with its kin. It's often standoffish and poor at socializing due to it's lone nature.",
+	"image": "",
+	"runsWon": 0,
+	"runsPlayed": 0,
+	"specialtyClass": {
+		"name": "Wylder",
+		"description": "A monster who seeks the power to share a great boon with it's kin. Strong and resistant to magic, it's large, strong hands and sharp claws can crush or tear through the toughest metals.",
+		"hp": 40,
+		"mp": 20,
+		"strength": 4,
+		"magic": 1,
+		"defense": 3,
+		"resistance": 4,
+		"skills": []
+	}
+}

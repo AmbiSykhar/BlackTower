@@ -1,0 +1,27 @@
+{
+	"name": "Rain",
+	"pronouns": {
+		"subject": "she",
+		"object": "her",
+		"possessiveSubject": "her",
+		"possessiveObject": "hers",
+		"reflexive": "herself"
+	},
+	"species": "Human?",
+	"player": "Azzie",
+	"biography": "A reclusive mage from a land you haven't heard of. She's climbing the tower in hopes of finding something, though only she knows that that is. Any power and knowledge she gains is a welcome bonus. Though she keeps to herself most of the time, she's rather cordial and pleasant to talk to.",
+	"image": "",
+	"runsWon": 0,
+	"runsPlayed": 0,
+	"specialtyClass": {
+		"name": "TBD",
+		"description": "A caster that burns herself to fuel powerful magic. Her body is covered in tattoos, brands and talismans to keep magical effects at bay, and she has an inherently large mana pool and high intensity spells due to her sacrifice of an arm and a leg. Her magic enacts a cost, first burning through her wards, and if not allowed to recover or if casting a particularly powerful spell, she will burn her own body. Specializes in cursed fire and summoned/enhanced weapons, she's a versatile fighter who feels at home both on the front lines and in the back, depending on the situation. Her magic has left her relatively physically weak, but quite durable thanks to her wards and artificial limbs.",
+		"hp": 30,
+		"mp": 40,
+		"strength": 2,
+		"magic": 5,
+		"defense": 2,
+		"resistance": 5,
+		"skills": []
+	}
+}

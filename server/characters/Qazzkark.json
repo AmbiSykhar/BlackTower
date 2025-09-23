@@ -1,0 +1,27 @@
+{
+	"name": "Qazzkark",
+	"pronouns": {
+		"subject": "he",
+		"object": "him",
+		"possessiveSubject": "his",
+		"possessiveObject": "his",
+		"reflexive": "himself"
+	},
+	"species": "Kobold",
+	"player": "Crimzin",
+	"biography": "A run-down bronze kobold who uses his small size to his advantage with his trickery, hoping one day to make a bigger name for himself.",
+	"image": "",
+	"runsWon": 0,
+	"runsPlayed": 0,
+	"specialtyClass": {
+		"name": "Rogue",
+		"description": "A stealthy fighter, using dexterity and cunning to pickpocket, sneak, trespass, and strike enemy weak points.",
+		"hp": 30,
+		"mp": 20,
+		"strength": 4,
+		"magic": 3,
+		"defense": 4,
+		"resistance": 2,
+		"skills": []
+	}
+}
