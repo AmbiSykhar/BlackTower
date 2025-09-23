@@ -1,3 +1,25 @@
+export class Character {
+    static baseHP = 10;
+    static baseMP = 10;
+    static baseStrength = 5;
+    static baseMagic = 5;
+    static baseDefense = 5;
+    static baseResistance = 5;
+
+    name = "";
+    pronouns = new PronounList();
+    species = "";
+    player = "";
+    biography = "";
+    image = "";
+    runsWon = 0;
+    runsPlayed = 0;
+    specialtyClass = new JobClass();
+
+    portrait = null;
+    portraitName = null;
+}
+
 class PronounList {
     subject = "they";
     object = "them";
@@ -24,36 +46,3 @@ class JobClass {
     skills = [];
 }
 
-class Character {
-    static get baseHP() {
-        return 10;
-    }
-    static get baseMP() {
-        return 10;
-    }
-    static get baseStrength() {
-        return 5;
-    }
-    static get baseMagic() {
-        return 5;
-    }
-    static get baseDefense() {
-        return 5;
-    }
-    static get baseResistance() {
-        return 5;
-    }
-
-    name = "";
-    pronouns = new PronounList();
-    species = "";
-    player = "";
-    biography = "";
-    image = "";
-    runsWon = 0;
-    runsPlayed = 0;
-    specialtyClass = new JobClass();
-
-    portrait = null;
-    portraitName = null;
-}

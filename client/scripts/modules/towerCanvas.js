@@ -204,6 +204,29 @@ export class TowerCanvas {
 		}
 	}
 
+	// Character List
+
+	static #loadingProfilePortraitFrame = loadImage("/assets/textures/profile-portrait-frame.png")
+	static #loadingProfileInfoFrame = loadImage("/assets/textures/profile-info-frame.png")
+	static #loadingProfileClassFrame = loadImage("/assets/textures/profile-class-frame.png")
+
+	async drawPlayerProfile(player) {
+		this.drawImage(await TowerCanvas.#loadingProfilePortraitFrame, Vector2.Zero);
+		this.drawImage(await TowerCanvas.#loadingProfileInfoFrame, Vector2.Zero);
+		this.drawImage(await TowerCanvas.#loadingProfileClassFrame, Vector2.Zero);
+		if (player.portrait != null) {
+			this.drawImage(player.portrait, Vector2.Zero);
+		}
+		if (player.portraitName != null) {
+			this.drawImage(player.portraitName, Vector2.Zero);
+		}
+		if (player.profileInfo != null) {
+			this.drawImage(player.profileInfo, Vector2.Zero);
+		}
+		if (player.profileClass != null) {
+			this.drawImage(player.profileClass, Vector2.Zero);
+		}
+	}
 
 	// HUD Elements
 

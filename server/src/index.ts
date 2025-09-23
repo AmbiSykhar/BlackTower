@@ -741,6 +741,9 @@ messageCallbacks["request"] = {
         console.log("Sending character names...");
         sendReply(ws, data.requestID, { charNames: characters.map(c => c.name) });
     },
+    "chardata": (ws: WebSocket, data: any) => {
+        sendReply(ws, data.requestID, { chars: characters });
+    },
     "musqueue": (ws: WebSocket, data: any) => {
         sendReply(ws, data.requestID, { queue: Jukebox.getQueue() });
     }

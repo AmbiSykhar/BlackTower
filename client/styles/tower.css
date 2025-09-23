@@ -424,3 +424,8 @@ body:not(.dm-mode) .dm-only {
 	
 	z-index: 10000;
 }
+
+::backdrop {
+	background-color: black;
+	opacity: 0.75;
+}
