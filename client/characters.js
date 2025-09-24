@@ -15,6 +15,7 @@ function addAllCharacters(msg) {
 	for (const c of msg.chars) {
 		if (!(c.name in characters)) {
 			let element = document.createElement("canvas");
+			element.classList.add("character-profile");
 			element.id = slugify(c.name);
 			charactersElement.append(element);
 		}

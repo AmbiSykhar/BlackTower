@@ -16,8 +16,8 @@
 	"specialtyClass": {
 		"name": "Rogue",
 		"description": "A stealthy fighter, using dexterity and cunning to pickpocket, sneak, trespass, and strike enemy weak points.",
-		"hp": 30,
-		"mp": 20,
+		"hp": 3,
+		"mp": 2,
 		"strength": 4,
 		"magic": 3,
 		"defense": 4,

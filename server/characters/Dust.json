@@ -16,8 +16,8 @@
 	"specialtyClass": {
 		"name": "Wylder",
 		"description": "A monster who seeks the power to share a great boon with it's kin. Strong and resistant to magic, it's large, strong hands and sharp claws can crush or tear through the toughest metals.",
-		"hp": 40,
-		"mp": 20,
+		"hp": 4,
+		"mp": 2,
 		"strength": 4,
 		"magic": 1,
 		"defense": 3,

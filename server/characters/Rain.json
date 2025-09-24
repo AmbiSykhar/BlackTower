@@ -16,8 +16,8 @@
 	"specialtyClass": {
 		"name": "TBD",
 		"description": "A caster that burns herself to fuel powerful magic. Her body is covered in tattoos, brands and talismans to keep magical effects at bay, and she has an inherently large mana pool and high intensity spells due to her sacrifice of an arm and a leg. Her magic enacts a cost, first burning through her wards, and if not allowed to recover or if casting a particularly powerful spell, she will burn her own body. Specializes in cursed fire and summoned/enhanced weapons, she's a versatile fighter who feels at home both on the front lines and in the back, depending on the situation. Her magic has left her relatively physically weak, but quite durable thanks to her wards and artificial limbs.",
-		"hp": 30,
-		"mp": 40,
+		"hp": 3,
+		"mp": 4,
 		"strength": 2,
 		"magic": 5,
 		"defense": 2,

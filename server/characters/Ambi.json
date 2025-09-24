@@ -16,12 +16,12 @@
 	"specialtyClass": {
 		"name": "Visweaver",
 		"description": "A master of energy magic. Capable of weaving magical energies into physical form.",
-		"hp": 0,
-		"mp": 20,
-		"strength": -1,
-		"magic": 4,
-		"defense": -3,
-		"resistance": 2,
+		"hp": 5,
+		"mp": 1,
+		"strength": 5,
+		"magic": 3,
+		"defense": 4,
+		"resistance": 3,
 		"skills": [
 			{
 				"name": "Test Skill",

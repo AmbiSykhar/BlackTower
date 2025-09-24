@@ -16,8 +16,8 @@
 	"specialtyClass": {
 		"name": "Death-Cursed Apothecary",
 		"description": "A specialist in support and healing—from a distance. Provides beneficial potions and such to allies with varying effects, or equally varied harmful things for enemies. At melee range, can lethally poison with her touch.",
-		"hp": 20,
-		"mp": 40,
+		"hp": 2,
+		"mp": 4,
 		"strength": 1,
 		"magic": 5,
 		"defense": 3,

@@ -206,9 +206,25 @@ export class TowerCanvas {
 
 	// Character List
 
-	static #loadingProfilePortraitFrame = loadImage("/assets/textures/profile-portrait-frame.png")
-	static #loadingProfileInfoFrame = loadImage("/assets/textures/profile-info-frame.png")
-	static #loadingProfileClassFrame = loadImage("/assets/textures/profile-class-frame.png")
+	static #loadingProfilePortraitFrame = loadImage("/assets/textures/profile-portrait-frame.png");
+	static #loadingProfileInfoFrame = loadImage("/assets/textures/profile-info-frame.png");
+	static #loadingProfileClassFrame = loadImage("/assets/textures/profile-class-frame.png");
+	static #loadingProfileIcons = {
+		hp: loadImage("/assets/textures/profile-hp.png"),
+		mp: loadImage("/assets/textures/profile-mp.png"),
+		strength: loadImage("/assets/textures/profile-str.png"),
+		magic: loadImage("/assets/textures/profile-mag.png"),
+		defense: loadImage("/assets/textures/profile-def.png"),
+		resistance: loadImage("/assets/textures/profile-res.png"),
+	};
+	static #profileIconPositions = {
+		hp: new Vector2(92, 53),
+		mp: new Vector2(126, 53),
+		strength: new Vector2(96, 61),
+		magic: new Vector2(130, 61),
+		defense: new Vector2(100, 69),
+		resistance: new Vector2(134, 69),
+	}
 
 	async drawPlayerProfile(player) {
 		this.drawImage(await TowerCanvas.#loadingProfilePortraitFrame, Vector2.Zero);
@@ -225,6 +241,15 @@ export class TowerCanvas {
 		}
 		if (player.profileClass != null) {
 			this.drawImage(player.profileClass, Vector2.Zero);
+		}
+
+		for (const key in TowerCanvas.#loadingProfileIcons) {
+			for (let i = 1; i < player.specialtyClass[key]; i++) {
+				let x = TowerCanvas.#profileIconPositions[key].x + (5 * (i - 1));
+				let y = TowerCanvas.#profileIconPositions[key].y;
+
+				this.drawImage(await TowerCanvas.#loadingProfileIcons[key], new Vector2(x, y));
+			}
 		}
 	}
 

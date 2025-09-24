@@ -429,3 +429,10 @@ body:not(.dm-mode) .dm-only {
 	background-color: black;
 	opacity: 0.75;
 }
+
+.character-profile {
+	display: block;
+	width: calc(159px * 3);
+	height: calc(106px * 3);
+	image-rendering: pixelated;
+}

@@ -34,6 +34,10 @@ async function mainLoop(now) {
 mainLoop(document.timeline.currentTime);
 
 function handleClick() {
+	if (characters.length == 0) {
+		return;
+	}
+
 	const pos = canvas.getMousePosition();
 
 	let cID;

@@ -16,8 +16,8 @@
 	"specialtyClass": {
 		"name": "Autumn Witch",
 		"description": "A Fae witch with the ability to control fire and command plants, though exerting this influence causes the subject to slowly wither, with plants that thrive in fall proving more resistant to this side effect.",
-		"hp": 10,
-		"mp": 50,
+		"hp": 1,
+		"mp": 5,
 		"strength": 3,
 		"magic": 5,
 		"defense": 2,
