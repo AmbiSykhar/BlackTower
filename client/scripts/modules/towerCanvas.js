@@ -285,20 +285,32 @@ export class TowerCanvas {
 			this.drawImage(hud.portraitName, hud.position);
 		}
 
-		this.drawHUDBar(hud.hpBar, new Vector2(hud.position.x + 24, hud.position.y + 75));
-		this.drawHUDBar(hud.mpBar, new Vector2(hud.position.x + 28, hud.position.y + 83));
+		this.drawHUDBar(hud.hpBar, hud.position.add(PlayerHUD.hpBarOffset));
+		this.drawHUDBar(hud.mpBar, hud.position.add(PlayerHUD.mpBarOffset));
 
 		// draw numbers after both bars to get the proper layering
 		let numHP = `${' '.repeat(3 - hud.player.currentHP.toString().length)}${hud.player.currentHP}/${' '.repeat(3 - hud.player.maxHP.toString().length)}${hud.player.maxHP}`;
 		let numMP = `${' '.repeat(3 - hud.player.currentMP.toString().length)}${hud.player.currentMP}/${' '.repeat(3 - hud.player.maxMP.toString().length)}${hud.player.maxMP}`;
-		this.writeSmall(new Vector2(hud.position.x + 45, hud.position.y + 77), numHP);
-		this.writeSmall(new Vector2(hud.position.x + 49, hud.position.y + 85), numMP);
+		this.writeSmall(hud.position.add(PlayerHUD.hpBarOffset).add({x: 21, y: 2}), numHP);
+		this.writeSmall(hud.position.add(PlayerHUD.mpBarOffset).add({x: 21, y: 2}), numMP);
 	}
 	static #loadingBarFillTextures = {
 		none: loadImage("assets/textures/bar-fill-none.png"),
 		label: loadImage("assets/textures/bar-fill-label.png"),
 		segment: loadImage("assets/textures/bar-fill-segment.png"),
 	};
+
+	/**
+	 * @param {Vector2} pos The position of the bar
+	 * @return {bool} Whether the mouse is over the bar
+	 */
+	barHovered(pos) {
+		const mouse = this.getMousePosition();
+		if (!mouse) return false;
+		let offset = mouse.subtract(pos);
+		let skew = offset.subtract({x: offset.y/2, y:0});
+		return skew.y >= 0 && skew.y <= 6 && skew.x >= -0.5 && skew.x <= 57.5;
+	}
 
 	/**
 	 * 
@@ -333,6 +345,7 @@ export class TowerCanvas {
 		const fill = 61 * Math.min(p, dp);
 		const delayFill = 61 * Math.max(p, dp);
 
+		let hover = this.barHovered(pos);
 
 		for (let i = 0; i < 7; i++) {
 			const start = rowOffsets[i];
@@ -343,14 +356,14 @@ export class TowerCanvas {
 
 			// fill
 			if (fillX > start) {
-				this.#context.fillStyle = bar.color;
+				this.#context.fillStyle = `color-mix(in hsl, ${bar.color}, white ${hover ? 15 : 0}%`;
 				this.#context.globalCompositeOperation = "overlay";
 				this.#context.fillRect(pos.x + start, pos.y + i, fillX - start, 1);
 			}
 
 			// delay
 			if (delayX > fillX) {
-				this.#context.fillStyle = bar.delayColor;
+				this.#context.fillStyle = `color-mix(in hsl, ${bar.delayColor}, white ${hover ? 15 : 0}%`;
 				this.#context.globalCompositeOperation = "source-over";
 				this.#context.fillRect(pos.x + fillX, pos.y + i, delayX - fillX, 1);
 			}
@@ -358,7 +371,7 @@ export class TowerCanvas {
 			// empty
 			if (fullX > delayX) {
 				this.#context.globalCompositeOperation = "source-over";
-				this.#context.fillStyle = "#494949";
+				this.#context.fillStyle = `color-mix(in hsl, #494949, white ${hover ? 15 : 0}%`;
 				this.#context.fillRect(pos.x + delayX, pos.y + i, fullX - delayX, 1);
 			}
 		}

@@ -5,8 +5,8 @@ import { getRandomNumber } from "/scripts/common.js";
 export class PlayerHUD {
 	static size = new Vector2(92, 92);
 	static barRectSize = new Vector2(65, 7);
-	static hpBarOffset = new Vector2(22, 75);
-	static mpBarOffset = new Vector2(26, 83);
+	static hpBarOffset = new Vector2(24, 75);
+	static mpBarOffset = new Vector2(28, 83);
 
 	/** @type {SessionCharacter} */
 	player;
