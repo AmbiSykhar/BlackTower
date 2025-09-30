@@ -43,11 +43,15 @@ function handleClick() {
 	let cID;
 	for (cID in playerHUDs) {
 		if (playerHUDs[cID].rect.contains(pos)) {
-			break;
+			if (canvas.barHovered(playerHUDs[cID].rect.position.add(PlayerHUD.hpBarOffset))) {
+				return initializePopup("edit-character-hp", cID); // clicked on hp bar
+			}
+			if (canvas.barHovered(playerHUDs[cID].rect.position.add(PlayerHUD.mpBarOffset))) {
+				return initializePopup("edit-character-mp", cID); // clicked on hp bar
+			}
 		}
 	}
 
-	initializePopup("click-player-hud", cID);
 }
 canvas.addClickListener(handleClick);
 

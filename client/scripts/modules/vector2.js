@@ -34,4 +34,19 @@ export class Vector2 {
 	static get Zero() {
 		return new Vector2(0, 0);
 	}
+
+	/**
+	 * @param {Vector2} other
+	 * @return {Vector2}
+	 */
+	add(other) {
+		return new Vector2(this.x + other.x, this.y + other.y);
+	}
+	/**
+	 * @param {Vector2} other
+	 * @return {Vector2}
+	 */
+	subtract(other) {
+		return new Vector2(this.x - other.x, this.y - other.y);
+	}
 }
